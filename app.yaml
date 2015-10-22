@@ -1,0 +1,21 @@
+application: hello-flask-app-engine
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: yes
+
+handlers:
+- url: /f/.*
+  script: main.app
+- url: /w/.*
+  script: hello_wa2.app
+- url: /s/.*
+  script: auth_server.app
+- url: /c/.*
+  script: auth_client.app
+
+libraries:
+- name: jinja2
+  version: "2.6"
+- name: markupsafe
+  version: "0.15"
