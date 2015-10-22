@@ -127,7 +127,7 @@ def current_user():
     return None
 
 
-@app.route('/s/', methods=('GET', 'POST'))
+@app.route('/', methods=('GET', 'POST'))
 def home():
     if request.method == 'POST':
         username = request.form.get('username')
@@ -146,7 +146,7 @@ def home():
 CLIENT_ID = 'GbRmKgbSMmlE2NlugMeFfQIba8hoVyBFsWS8Igsq'
 CLIENT_SECRET = 'BfP7jsN8dSsXjGLfTTPiEvarMJOpkZQ2Y7IVVee8X929LfolMV'
 
-@app.route('/s/client')
+@app.route('/client')
 def client():
     user = current_user()
     if not user:
@@ -169,7 +169,7 @@ def client():
         client_secret=item.client_secret,
     )
 
-@app.route('/s/createClient')
+@app.route('/createClient')
 def createClient():
     client_list = Client.query(Client.client_id == CLIENT_ID).fetch(1)
     if client_list:
@@ -258,13 +258,13 @@ def save_token(token, request, *args, **kwargs):
     return tok
 
 
-@app.route('/s/oauth/token', methods=['GET', 'POST'])
+@app.route('/oauth/token', methods=['GET', 'POST'])
 @oauth.token_handler
 def access_token():
     return None
 
 
-@app.route('/s/oauth/authorize', methods=['GET', 'POST'])
+@app.route('/oauth/authorize', methods=['GET', 'POST'])
 @oauth.authorize_handler
 def authorize(*args, **kwargs):
     user = current_user()
@@ -298,7 +298,7 @@ def get_user(username, password, client, request, *args, **kwargs):
 #    return user
 
 
-@app.route('/s/api/me')
+@app.route('/api/me')
 @oauth.require_oauth()
 def me():
     user_key = request.oauth.access_token.user_id

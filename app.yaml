@@ -5,14 +5,8 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /f/.*
-  script: main.app
-- url: /w/.*
-  script: hello_wa2.app
-- url: /s/.*
+- url: /.*
   script: auth_server.app
-- url: /c/.*
-  script: auth_client.app
 
 libraries:
 - name: jinja2
