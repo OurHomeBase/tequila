@@ -5,8 +5,12 @@ api_version: 1
 threadsafe: yes
 
 handlers:
-- url: /.*
-  script: auth_server.app
+- url: /oauth/.*
+  script: api.oauth_server.app
+- url: /api/user/.*
+  script: api.user_api.app
+- url: /api/client/.*
+  script: api.client_api.app
 
 libraries:
 - name: jinja2
