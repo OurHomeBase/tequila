@@ -12,7 +12,14 @@ class User(ndb.Model):
             return self.key.id()
         else:
             return None
+        
+    @classmethod
+    def findById(cls, id):
+        return User.query(User.key == ndb.Key(User, id)).fetch(1)[0]    
                                                                  
+    @classmethod
+    def findByUsername(cls, username):
+        return User.query(User.username == username).fetch(1)[0]    
 
 
 class Client(ndb.Model):
@@ -45,6 +52,14 @@ class Client(ndb.Model):
             return self.p_defaultscopes.split()
         return []
 
+    @classmethod
+    def findByClientId(cls, client_id):
+        client_list = Client.query(Client.client_id == client_id).fetch(1)
+        if client_list:
+            return client_list[0]
+        else:
+            return None    
+                                                                 
 
 class Grant(ndb.Model):
     id = ndb.IntegerProperty()
@@ -71,6 +86,10 @@ class Grant(ndb.Model):
         if self.p_scopes:
             return self.p_scopes.split()
         return []
+    
+    @classmethod
+    def findByClientIdAndCode(cls, client_id, code):
+        return Grant.query(Grant.client_id == client_id, Grant.code==code).fetch(1)[0]
 
 
 class Token(ndb.Model):
@@ -99,3 +118,16 @@ class Token(ndb.Model):
         if self.p_scopes:
             return self.p_scopes.split()
         return []
+    
+    @classmethod
+    def findAllByClientIdAndUserId(cls, client_id, user_id):
+        return Token.query(Token.client_id==client_id, Token.user_id==user_id).fetch()
+    
+    @classmethod
+    def findByAccessCode(cls, access_token):
+        return Token.query(Token.access_token == access_token).fetch(1)[0]
+    
+    @classmethod
+    def findByRefreshCode(cls, refresh_token):
+        return Token.query(Token.refresh_token == refresh_token).fetch(1)[0]
+    

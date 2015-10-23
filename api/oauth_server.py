@@ -8,10 +8,7 @@ from werkzeug.security import gen_salt
 from flask_oauthlib.provider import OAuth2Provider
 from google.appengine.ext import ndb
 
-from modules import User
-from modules import Client
-from modules import Grant
-from modules import Token
+from modules import modules
 
 app = Flask(__name__, template_folder='templates')
 app.debug = True
@@ -25,16 +22,12 @@ oauth = OAuth2Provider(app)
 
 @oauth.clientgetter
 def load_client(client_id):
-    qry = Client.query(Client.client_id == client_id)
-    clients = qry.fetch(1)
-    return clients[0]
+    return modules.Client.findByClientId(client_id)
 
 
 @oauth.grantgetter
 def load_grant(client_id, code):
-    qry = Grant.query(Grant.client_id == client_id, Grant.code==code)
-    grants = qry.fetch(1)
-    return grants[0]
+    return modules.Grant.findByClientIdAndCode(client_id, code)
 
 
 @oauth.grantsetter
@@ -46,7 +39,7 @@ def save_grant(client_id, code, request, *args, **kwargs):
         code=code['code'],
         redirect_uri=request.redirect_uri,
         p_scopes=' '.join(request.scopes),
-        user=current_user(),
+        #user=current_user(),
         expires=expires
     )
     grant.put()
@@ -56,17 +49,15 @@ def save_grant(client_id, code, request, *args, **kwargs):
 @oauth.tokengetter
 def load_token(access_token=None, refresh_token=None):
     if access_token:
-        return Token.query(Token.access_token == access_token).fetch(1)[0]
+        return modules.Token.findByAccessCode(access_token)
     elif refresh_token:
-        return Token.query(Token.refresh_token == refresh_token).fetch(1)[0]
+        return modules.Token.findByRefreshCode(refresh_token)
 
 
 @oauth.tokensetter
 def save_token(token, request, *args, **kwargs):
-    toks = Token.query(
-        Token.client_id==request.client.client_id,
-        Token.user_id==request.user.id
-    ).fetch()
+    toks = modules.Token.findAllByClientIdAndUserId(
+        request.client.client_id, request.user.id)
     # make sure that every client has only one token connected to a user
     for t in toks:
         t.key.delete()
@@ -74,7 +65,7 @@ def save_token(token, request, *args, **kwargs):
     expires_in = token.pop('expires_in')
     expires = datetime.utcnow() + timedelta(seconds=expires_in)
 
-    tok = Token(
+    tok = modules.Token(
         access_token=token['access_token'],
         refresh_token=token['refresh_token'],
         token_type=token['token_type'],
@@ -92,23 +83,6 @@ def save_token(token, request, *args, **kwargs):
 def access_token():
     return None
 
-
-@app.route('/oauth/authorize', methods=['GET', 'POST'])
-@oauth.authorize_handler
-def authorize(*args, **kwargs):
-    user = current_user()
-    if not user:
-        return redirect('/s/')
-    if request.method == 'GET':
-        client_id = kwargs.get('client_id')
-        client = Client.query(Client.client_id == client_id).fetch(1)[0]
-        kwargs['client'] = client
-        kwargs['user'] = user
-        return render_template('authorize.html', **kwargs)
-
-    confirm = request.form.get('confirm', 'no')
-    return confirm == 'yes'
-
 @oauth.usergetter
 def get_user(username, password, client, request, *args, **kwargs):
     # client: current request client
@@ -117,7 +91,7 @@ def get_user(username, password, client, request, *args, **kwargs):
 #     user = User.get_user_by_username(username)
 #     if not user.validate_password(password):
 #         return None
-    user = User.query(User.username == username).fetch(1)[0]
+    user = modules.User.findByUsername(username)
     
     return user
 
