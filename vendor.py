@@ -36,7 +36,7 @@ def add(folder, index=1):
     folder: Path to the folder containing packages, relative to ``os.getcwd()``
     position: Where in ``sys.path`` to insert the vendor packages. By default
       this is set to 1. It is inadvisable to set it to 0 as it will override
-      any modules in the current working directory.
+      any persistence in the current working directory.
   """
 
   # Check if the path contains a virtualenv.

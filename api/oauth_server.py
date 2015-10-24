@@ -8,7 +8,7 @@ from werkzeug.security import gen_salt
 from flask_oauthlib.provider import OAuth2Provider
 from google.appengine.ext import ndb
 
-from modules import modules
+from persistence import models
 
 app = Flask(__name__, template_folder='templates')
 app.debug = True
@@ -22,12 +22,12 @@ oauth = OAuth2Provider(app)
 
 @oauth.clientgetter
 def load_client(client_id):
-    return modules.Client.findByClientId(client_id)
+    return models.Client.findByClientId(client_id)
 
 
 @oauth.grantgetter
 def load_grant(client_id, code):
-    return modules.Grant.findByClientIdAndCode(client_id, code)
+    return models.Grant.findByClientIdAndCode(client_id, code)
 
 
 @oauth.grantsetter
@@ -49,14 +49,14 @@ def save_grant(client_id, code, request, *args, **kwargs):
 @oauth.tokengetter
 def load_token(access_token=None, refresh_token=None):
     if access_token:
-        return modules.Token.findByAccessCode(access_token)
+        return models.Token.findByAccessCode(access_token)
     elif refresh_token:
-        return modules.Token.findByRefreshCode(refresh_token)
+        return models.Token.findByRefreshCode(refresh_token)
 
 
 @oauth.tokensetter
 def save_token(token, request, *args, **kwargs):
-    toks = modules.Token.findAllByClientIdAndUserId(
+    toks = models.Token.findAllByClientIdAndUserId(
         request.client.client_id, request.user.id)
     # make sure that every client has only one token connected to a user
     for t in toks:
@@ -65,7 +65,7 @@ def save_token(token, request, *args, **kwargs):
     expires_in = token.pop('expires_in')
     expires = datetime.utcnow() + timedelta(seconds=expires_in)
 
-    tok = modules.Token(
+    tok = models.Token(
         access_token=token['access_token'],
         refresh_token=token['refresh_token'],
         token_type=token['token_type'],
@@ -91,7 +91,7 @@ def get_user(username, password, client, request, *args, **kwargs):
 #     user = User.get_user_by_username(username)
 #     if not user.validate_password(password):
 #         return None
-    user = modules.User.findByUsername(username)
+    user = models.User.findByUsername(username)
     
     return user
 
