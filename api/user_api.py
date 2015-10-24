@@ -17,7 +17,7 @@ oauth = oauth_server.oauth
 @app.route('/api/user/me')
 @oauth.require_oauth()
 def me():
-    user_id = request.oauth.access_token.user_id
-    user = user_models.User.findById(user_id)
-    return jsonify(username=user.username, test='yaya')
+  user_id = request.oauth.access_token.user_id
+  user = user_models.User.findById(user_id)
+  return jsonify(username=user.username, test='yaya')
 

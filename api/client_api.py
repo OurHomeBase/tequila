@@ -24,23 +24,23 @@ CLIENT_SECRET = 'BfP7jsN8dSsXjGLfTTPiEvarMJOpkZQ2Y7IVVee8X929LfolMV'
 
 @app.route('/api/client/create')
 def createClient():
-    client = user_models.Client.findByClientId(CLIENT_ID)
-    if not client:
-        client = user_models.Client(
-            client_id=CLIENT_ID,
-            client_secret=CLIENT_SECRET,
-            p_redirect_uris=' '.join([
-                'http://localhost:8080/c/authorized',
-                'http://127.0.0.1:8080/c/authorized',
-                'http://127.0.1:8080/c/authorized',
-                'http://127.1:8080/c/authorized',
-                ]),
+  client = user_models.Client.findByClientId(CLIENT_ID)
+  if not client:
+    client = user_models.Client(
+        client_id=CLIENT_ID,
+        client_secret=CLIENT_SECRET,
+        p_redirect_uris=' '.join([
+            'http://localhost:8080/c/authorized',
+            'http://127.0.0.1:8080/c/authorized',
+            'http://127.0.1:8080/c/authorized',
+            'http://127.1:8080/c/authorized',
+            ]),
             p_defaultscopes='email',
         )
-        client.put()
-    return jsonify(
-        client_id=client.client_id,
-        client_secret=client.client_secret,
+      client.put()
+  return jsonify(
+      client_id=client.client_id,
+      client_secret=client.client_secret,
     )
 
 

@@ -23,66 +23,66 @@ oauth = OAuth2Provider(app)
 
 @oauth.clientgetter
 def load_client(client_id):
-    return oauth_models.Client.findByClientId(client_id)
+  return oauth_models.Client.findByClientId(client_id)
 
 
 @oauth.grantgetter
 def load_grant(client_id, code):
-    return oauth_models.Grant.findByClientIdAndCode(client_id, code)
+  return oauth_models.Grant.findByClientIdAndCode(client_id, code)
 
 
 @oauth.grantsetter
 def save_grant(client_id, code, request, *args, **kwargs):
-    # decide the expires time yourself
-    expires = datetime.utcnow() + timedelta(seconds=100)
-    grant = Grant(
-        client_id=client_id,
-        code=code['code'],
-        redirect_uri=request.redirect_uri,
-        p_scopes=' '.join(request.scopes),
-        #user=current_user(),
-        expires=expires
-    )
-    grant.put()
-    return grant
+  # decide the expires time yourself
+  expires = datetime.utcnow() + timedelta(seconds=100)
+  grant = Grant(
+      client_id=client_id,
+      code=code['code'],
+      redirect_uri=request.redirect_uri,
+      p_scopes=' '.join(request.scopes),
+      #user=current_user(),
+      expires=expires
+  )
+  grant.put()
+  return grant
 
 
 @oauth.tokengetter
 def load_token(access_token=None, refresh_token=None):
-    if access_token:
-        return oauth_models.Token.findByAccessCode(access_token)
-    elif refresh_token:
-        return oauth_models.Token.findByRefreshCode(refresh_token)
+  if access_token:
+    return oauth_models.Token.findByAccessCode(access_token)
+  elif refresh_token:
+    return oauth_models.Token.findByRefreshCode(refresh_token)
 
 
 @oauth.tokensetter
 def save_token(token, request, *args, **kwargs):
-    toks = oauth_models.Token.findAllByClientIdAndUserId(
-        request.client.client_id, request.user.id)
-    # make sure that every client has only one token connected to a user
-    for t in toks:
-        t.key.delete()
+  toks = oauth_models.Token.findAllByClientIdAndUserId(
+      request.client.client_id, request.user.id)
+  # make sure that every client has only one token connected to a user
+  for t in toks:
+    t.key.delete()
 
-    expires_in = token.pop('expires_in')
-    expires = datetime.utcnow() + timedelta(seconds=expires_in)
+  expires_in = token.pop('expires_in')
+  expires = datetime.utcnow() + timedelta(seconds=expires_in)
 
-    tok = oauth_models.Token(
-        access_token=token['access_token'],
-        refresh_token=token['refresh_token'],
-        token_type=token['token_type'],
-        p_scopes=token['scope'],
-        expires=expires,
-        client_id=request.client.client_id,
-        user_id=request.user.id,
-    )
-    tok.put()
-    return tok
+  tok = oauth_models.Token(
+      access_token=token['access_token'],
+      refresh_token=token['refresh_token'],
+      token_type=token['token_type'],
+      p_scopes=token['scope'],
+      expires=expires,
+      client_id=request.client.client_id,
+      user_id=request.user.id,
+  )
+  tok.put()
+  return tok
 
 
 @app.route('/oauth/token', methods=['GET', 'POST'])
 @oauth.token_handler
 def access_token():
-    return None
+  return None
 
 @oauth.usergetter
 def get_user(username, password, client, request, *args, **kwargs):
@@ -92,9 +92,9 @@ def get_user(username, password, client, request, *args, **kwargs):
 #     user = User.get_user_by_username(username)
 #     if not user.validate_password(password):
 #         return None
-    user = user_models.User.findByUsername(username)
+  user = user_models.User.findByUsername(username)
     
-    return user
+  return user
 
     
     # parameter `request` is an OAuthlib Request object.
