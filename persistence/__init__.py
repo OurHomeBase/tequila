@@ -1,1 +1,1 @@
-'''Init module for package modules.'''
+'''init'''
