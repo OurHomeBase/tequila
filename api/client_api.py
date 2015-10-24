@@ -6,7 +6,7 @@ from werkzeug.security import gen_salt
 from flask_oauthlib.provider import OAuth2Provider
 from google.appengine.ext import ndb
 
-from persistence import models
+from persistence import user_models
 
 from api import oauth_server
 
@@ -24,9 +24,9 @@ CLIENT_SECRET = 'BfP7jsN8dSsXjGLfTTPiEvarMJOpkZQ2Y7IVVee8X929LfolMV'
 
 @app.route('/api/client/create')
 def createClient():
-    client = models.Client.findByClientId(CLIENT_ID)
+    client = user_models.Client.findByClientId(CLIENT_ID)
     if not client:
-        client = models.Client(
+        client = user_models.Client(
             client_id=CLIENT_ID,
             client_secret=CLIENT_SECRET,
             p_redirect_uris=' '.join([

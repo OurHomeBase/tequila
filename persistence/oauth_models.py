@@ -1,33 +1,10 @@
-'''A module to store data models.'''
+'''The module stores user_models for authentication and authorization.'''
 from google.appengine.ext import ndb
-
-
-class User(ndb.Model):
-    #id = ndb.IntegerProperty()
-    username = ndb.StringProperty()
-    
-    @property
-    def id(self):
-        if self.key:
-            return self.key.id()
-        else:
-            return None
-        
-    @classmethod
-    def findById(cls, id):
-        return User.query(User.key == ndb.Key(User, id)).fetch(1)[0]    
-                                                                 
-    @classmethod
-    def findByUsername(cls, username):
-        return User.query(User.username == username).fetch(1)[0]    
-
+from persistence import user_models
 
 class Client(ndb.Model):
     client_id = ndb.StringProperty()
     client_secret = ndb.StringProperty()
-
-    user_id = ndb.IntegerProperty()
-    user = ndb.StructuredProperty(User)
 
     p_redirect_uris = ndb.StringProperty()
     p_defaultscopes = ndb.StringProperty()
@@ -65,7 +42,7 @@ class Grant(ndb.Model):
     id = ndb.IntegerProperty()
 
     user_id = ndb.IntegerProperty()
-    user = ndb.StructuredProperty(User)
+    user = ndb.StructuredProperty(user_models.User)
 
     client_id = ndb.StringProperty()
     client = ndb.StructuredProperty(Client)
@@ -98,7 +75,7 @@ class Token(ndb.Model):
     client = ndb.StructuredProperty(Client)
 
     user_id = ndb.IntegerProperty()
-    user = ndb.StructuredProperty(User)
+    user = ndb.StructuredProperty(user_models.User)
 
     # currently only bearer is supported
     token_type = ndb.StringProperty()

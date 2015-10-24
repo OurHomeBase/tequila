@@ -2,7 +2,7 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 
-from persistence import models
+from persistence import user_models
 from api import oauth_server
 
 app = Flask(__name__, template_folder='templates')
@@ -18,6 +18,6 @@ oauth = oauth_server.oauth
 @oauth.require_oauth()
 def me():
     user_id = request.oauth.access_token.user_id
-    user = models.User.findById(user_id)
+    user = user_models.User.findById(user_id)
     return jsonify(username=user.username, test='yaya')
 
