@@ -8,7 +8,7 @@ from google.appengine.ext import ndb
 
 from persistence import oauth_models
 
-from api import oauth_server
+from api import oauth_api
 
 app = Flask(__name__, template_folder='templates')
 app.debug = True
@@ -16,7 +16,7 @@ app.secret_key = 'secret'
 
 app.config['DEBUG'] = True
 
-oauth = oauth_server.oauth
+oauth = oauth_api.oauth
 
 
 CLIENT_ID = 'GbRmKgbSMmlE2NlugMeFfQIba8hoVyBFsWS8Igsq'

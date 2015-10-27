@@ -18,3 +18,11 @@ Authorization: Bearer <YOUR ACCESS TOKEN>
 
 If everything works properly you will get a user.
 
+# Integration Testing
+To run all integration tests:
+
+python -m unittest discover -v -p '*_test.py'
+
+
+
+
