@@ -1,18 +1,20 @@
 '''The module stores user_models for authentication and authorization.'''
 from google.appengine.ext import ndb
-from persistence import user_models
+
+class OAuthUser(ndb.Model):
+  id = ndb.IntegerProperty()
 
 
 class Client(ndb.Model):
   client_id = ndb.StringProperty()
   client_secret = ndb.StringProperty()
-
+  
   p_redirect_uris = ndb.StringProperty()
   p_defaultscopes = ndb.StringProperty()
 
   @property
   def client_type(self):
-    return 'public'
+    return 'confidential'
 
   @property
   def redirect_uris(self):
@@ -43,7 +45,7 @@ class Grant(ndb.Model):
   id = ndb.IntegerProperty()
 
   user_id = ndb.IntegerProperty()
-  user = ndb.StructuredProperty(user_models.User)
+  user = ndb.StructuredProperty(OAuthUser)
 
   client_id = ndb.StringProperty()
   client = ndb.StructuredProperty(Client)
@@ -76,7 +78,7 @@ class Token(ndb.Model):
   client = ndb.StructuredProperty(Client)
 
   user_id = ndb.IntegerProperty()
-  user = ndb.StructuredProperty(user_models.User)
+  user = ndb.StructuredProperty(OAuthUser)
 
   # currently only bearer is supported
   token_type = ndb.StringProperty()
@@ -87,10 +89,6 @@ class Token(ndb.Model):
 
   p_scopes = ndb.StringProperty()
 
-  @property
-  def p_user(self):
-    return self.user
-    
   @property
   def scopes(self):
     if self.p_scopes:

@@ -40,11 +40,12 @@ def load_grant(client_id, code):
   return oauth_models.Grant.findByClientIdAndCode(client_id, code)
 
 
+# TODO(yury): may be delete it
 @oauth.grantsetter
 def save_grant(client_id, code, request, *args, **kwargs):
   # decide the expires time yourself
   expires = datetime.utcnow() + timedelta(seconds=100)
-  grant = Grant(
+  grant = oauth_models.Grant(
       client_id=client_id,
       code=code['code'],
       redirect_uri=request.redirect_uri,
@@ -74,6 +75,7 @@ def save_token(token, request, *args, **kwargs):
 
   expires_in = token.pop('expires_in')
   expires = datetime.utcnow() + timedelta(seconds=expires_in)
+  user = oauth_models.OAuthUser(id=request.user.id)
 
   tok = oauth_models.Token(
       access_token=token['access_token'],
@@ -83,10 +85,11 @@ def save_token(token, request, *args, **kwargs):
       expires=expires,
       client_id=request.client.client_id,
       user_id=request.user.id,
+      user=user
   )
   tok.put()
   return tok
-
+ 
 
 @app.route('/oauth/token', methods=['GET', 'POST'])
 @basic_auth.login_required
@@ -96,19 +99,10 @@ def access_token():
 
 @oauth.usergetter
 def get_user(username, password, client, request, *args, **kwargs):
-    # client: current request client
-#     if not client.has_password_credential_permission:
-#         return None
-#     user = User.get_user_by_username(username)
-#     if not user.validate_password(password):
-#         return None
+  if not client:
+    return None
   user = user_models.User.findByUsername(username)
+#   if not user.validate_password(password):
+#     return None
     
-  return user
-
-    
-    # parameter `request` is an OAuthlib Request object.
-    # maybe you will need it somewhere
-#    return user
-
-
+  return oauth_models.OAuthUser(id=user.id)
