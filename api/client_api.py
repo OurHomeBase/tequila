@@ -7,6 +7,7 @@ from flask_oauthlib.provider import OAuth2Provider
 from google.appengine.ext import ndb
 
 from persistence import oauth_models
+from utils import constants
 
 from api import oauth_api
 
@@ -19,16 +20,14 @@ app.config['DEBUG'] = True
 oauth = oauth_api.oauth
 
 
-CLIENT_ID = 'GbRmKgbSMmlE2NlugMeFfQIba8hoVyBFsWS8Igsq'
-CLIENT_SECRET = 'BfP7jsN8dSsXjGLfTTPiEvarMJOpkZQ2Y7IVVee8X929LfolMV'
 
 @app.route('/api/client/create')
 def createClient():
-  client = oauth_models.Client.findByClientId(CLIENT_ID)
+  client = oauth_models.Client.findByClientId(constants.CLIENT_ID)
   if not client:
     client = oauth_models.Client(
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
+        client_id=constants.CLIENT_ID,
+        client_secret=constants.CLIENT_SECRET,
         p_redirect_uris=' '.join([
             'http://localhost:8080/c/authorized',
             'http://127.0.0.1:8080/c/authorized',

@@ -2,6 +2,7 @@
 from google.appengine.ext import ndb
 from persistence import user_models
 
+
 class Client(ndb.Model):
   client_id = ndb.StringProperty()
   client_secret = ndb.StringProperty()

@@ -6,10 +6,12 @@ from flask import session, request
 from flask import render_template, redirect, jsonify
 from werkzeug.security import gen_salt
 from flask_oauthlib.provider import OAuth2Provider
+from flask_httpauth import HTTPBasicAuth
 from google.appengine.ext import ndb
 
 from persistence import user_models
 from persistence import oauth_models
+from utils import constants
 
 app = Flask(__name__, template_folder='templates')
 app.debug = True
@@ -19,7 +21,13 @@ app.config['DEBUG'] = True
 
 oauth = OAuth2Provider(app)
 
+basic_auth = HTTPBasicAuth()
 
+@basic_auth.get_password
+def get_pw(username):
+    if username == constants.CLIENT_ID:
+        return constants.CLIENT_SECRET
+    return None
 
 @oauth.clientgetter
 def load_client(client_id):
@@ -80,6 +88,7 @@ def save_token(token, request, *args, **kwargs):
 
 
 @app.route('/oauth/token', methods=['GET', 'POST'])
+@basic_auth.login_required
 @oauth.token_handler
 def access_token():
   return None
