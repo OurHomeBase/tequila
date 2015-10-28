@@ -31,6 +31,25 @@ class OAuthApiTest(unittest.TestCase):
     self.assertTrue(token_data)
     self.assertTrue(token_data['access_token'])
 
+  def testGetAccessTokenDeniesIfBasicAuthFails(self):
+    # Setup.
+    client_id_secret = '{}:{}'.format(constants.CLIENT_ID, 
+                                      'wrong password')  
+    
+    headers = {'Authorization': 'Basic {}'.format(base64.b64encode(client_id_secret))}
+    grant_request_data = {'grant_type': 'password',
+                          'username': 'sss',
+                          'password': 'A3ddj3w',
+                          'client_id': constants.CLIENT_ID}
+    
+    # Execute.
+    token_request = requests.post("http://localhost:8080/oauth/token", 
+                                  data = grant_request_data,
+                                  headers=headers)
+    
+    # Verify.
+    self.assertEqual(401, token_request.status_code)
+
   def testAccessProtectedApiReturnsCorrectDataWhenAuthorized(self):
     # Setup.
     client_id_secret = '{}:{}'.format(constants.CLIENT_ID, 

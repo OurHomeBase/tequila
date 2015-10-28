@@ -11,7 +11,6 @@ from google.appengine.ext import ndb
 
 from persistence import user_models
 from persistence import oauth_models
-from utils import constants
 
 app = Flask(__name__, template_folder='templates')
 app.debug = True
@@ -23,11 +22,13 @@ oauth = OAuth2Provider(app)
 
 basic_auth = HTTPBasicAuth()
 
+
 @basic_auth.get_password
 def get_pw(username):
-    if username == constants.CLIENT_ID:
-        return constants.CLIENT_SECRET
-    return None
+  client = oauth_models.Client.findByClientId(username)
+
+  return client.client_secret if client else None
+
 
 @oauth.clientgetter
 def load_client(client_id):
