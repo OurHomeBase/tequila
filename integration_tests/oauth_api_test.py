@@ -4,17 +4,47 @@ import unittest
 import requests
 import time
 import base64
+import json
 
 from utils import constants
 
 class OAuthApiTest(unittest.TestCase):
+  
+  def setUp(self):
+    self._CreateClient()
+    self.waitToCache()
 
-  def testGetAccessTokenReturnsCorrectToken(self):
-    # Setup.
+    self._CreateUser()
+    self.waitToCache()
+    
+  def waitToCache(self):  
+    # NDB needs time to store data in Cache. 
+    time.sleep(0.1)
+  
+  def _CreateClient(self):
+    client_request = requests.get("http://localhost:8080/api/client/create", 
+                                  headers=self._CreateBasicAuthHeaders())
+    self.assertEqual(200, client_request.status_code)    
+    self.assertEqual(constants.CLIENT_ID, client_request.json()['client_id'])
+  
+  def _CreateUser(self):
+    headers = self._CreateBasicAuthHeaders()
+    headers['Content-Type'] = 'application/json'
+    user_request = requests.post("http://localhost:8080/api/user/", 
+                                  headers=headers,
+                                  data=json.dumps({'username': 'sss'}))
+    
+    self.assertEqual(200, user_request.status_code)    
+    self.assertEqual('sss', user_request.json()['username'])
+  
+  def _CreateBasicAuthHeaders(self):
     client_id_secret = '{}:{}'.format(constants.CLIENT_ID, 
                                       constants.CLIENT_SECRET)  
     
-    headers = {'Authorization': 'Basic {}'.format(base64.b64encode(client_id_secret))}
+    return {'Authorization': 'Basic {}'.format(base64.b64encode(client_id_secret))}
+
+  def testGetAccessTokenReturnsCorrectToken(self):
+    # Setup.
     grant_request_data = {'grant_type': 'password',
                           'username': 'sss',
                           'password': 'A3ddj3w',
@@ -23,7 +53,7 @@ class OAuthApiTest(unittest.TestCase):
     # Execute.
     token_request = requests.post("http://localhost:8080/oauth/token", 
                                   data = grant_request_data,
-                                  headers=headers)
+                                  headers=self._CreateBasicAuthHeaders())
     
     token_data = token_request.json() 
     
@@ -32,11 +62,11 @@ class OAuthApiTest(unittest.TestCase):
     self.assertTrue(token_data['access_token'])
 
   def testGetAccessTokenDeniesIfBasicAuthFails(self):
-    # Setup.
-    client_id_secret = '{}:{}'.format(constants.CLIENT_ID, 
-                                      'wrong password')  
+    client_id_secret = '{}:{}'.format(constants.CLIENT_ID, 'some passwors')  
     
     headers = {'Authorization': 'Basic {}'.format(base64.b64encode(client_id_secret))}
+    
+    # Setup.
     grant_request_data = {'grant_type': 'password',
                           'username': 'sss',
                           'password': 'A3ddj3w',
@@ -52,10 +82,6 @@ class OAuthApiTest(unittest.TestCase):
 
   def testAccessProtectedApiReturnsCorrectDataWhenAuthorized(self):
     # Setup.
-    client_id_secret = '{}:{}'.format(constants.CLIENT_ID, 
-                                      constants.CLIENT_SECRET)  
-    
-    headers = {'Authorization': 'Basic {}'.format(base64.b64encode(client_id_secret))}
     grant_request_data = {'grant_type': 'password',
                           'username': 'sss',
                           'password': 'A3ddj3w',
@@ -63,12 +89,12 @@ class OAuthApiTest(unittest.TestCase):
     
     token_request = requests.post("http://localhost:8080/oauth/token", 
                                   data = grant_request_data,
-                                  headers=headers)
+                                  headers=self._CreateBasicAuthHeaders())
 
     access_token = token_request.json()['access_token']
     
     # Need to wait before using the token to make sure it is saved in cache. 
-    time.sleep(1)
+    self.waitToCache()
      
     # Execute.
     headers = {'Authorization': 'Bearer {}'.format(access_token)}

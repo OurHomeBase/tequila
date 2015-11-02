@@ -20,6 +20,8 @@ class User(ndb.Model):
                                  
   @classmethod
   def findByUsername(cls, username):
-    return User.query(User.username == username).fetch(1)[0]  
+    list_users = User.query(User.username == username).fetch(1)
+     
+    return list_users[0] if list_users else None  
 
   

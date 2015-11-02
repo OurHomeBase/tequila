@@ -37,6 +37,7 @@ def createClient():
             p_defaultscopes='email',
         )
     client.put()
+       
   return jsonify(
       client_id=client.client_id,
       client_secret=client.client_secret,

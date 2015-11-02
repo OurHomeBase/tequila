@@ -9,3 +9,9 @@ werkzeug==0.9.4
 Flask-OAuthlib>=0.5.0
 Flask-HTTPAuth
 requests
+# Licenses for libraries:
+# http://flask.pocoo.org/docs/0.10/license/
+# https://github.com/mitsuhiko/werkzeug/blob/master/LICENSE
+# https://github.com/lepture/flask-oauthlib/blob/master/LICENSE
+# https://github.com/miguelgrinberg/Flask-HTTPAuth/blob/master/LICENSE
+# http://docs.python-requests.org/en/latest/user/intro/#apache2
