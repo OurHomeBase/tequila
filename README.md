@@ -18,11 +18,20 @@ Authorization: Bearer <YOUR ACCESS TOKEN>
 
 If everything works properly you will get a user.
 
-# Integration Testing
-To run all integration tests:
+# Testing
+## Unit Testing
+* make sure app engine is installed in:
+  /usr/local/google_appengine
 
-python -m unittest discover -v -p '*_test.py'
+* python -m unittest discover -s unit_tests/*/ -p '*_test.py' -t ./
 
+## Integration Testing
+* start the tequila_server
+* python -m unittest discover -s integration_tests/ -p '*_test.py' -t ./
+
+## To run all tests
+* start the tequila_server
+* python -m unittest discover -v -p '*_test.py'
 
 
 

@@ -19,4 +19,5 @@ libraries:
   version: "0.15"
 
 skip_files:
-- integration_tests/.*  
+- integration_tests/.*
+- unit_tests/.*
