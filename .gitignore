@@ -9,6 +9,7 @@ __pycache__/
 .Python
 env/
 build/
+coverage_html/
 develop-eggs/
 dist/
 downloads/
@@ -22,6 +23,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

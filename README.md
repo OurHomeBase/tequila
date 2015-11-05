@@ -23,7 +23,7 @@ If everything works properly you will get a user.
 * make sure app engine is installed in:
   /usr/local/google_appengine
 
-* python -m unittest discover -s unit_tests/*/ -p '*_test.py' -t ./
+* python run_unit_tests.py
 
 ## Integration Testing
 * start the tequila_server
@@ -32,6 +32,13 @@ If everything works properly you will get a user.
 ## To run all tests
 * start the tequila_server
 * python -m unittest discover -v -p '*_test.py'
+
+## Coverage.
+For now generates coverage for everything, need to change it to skip lib.
+
+* sudo pip install coverage
+* coverage run run_unit_tests.py
+* coverage html -d coverage_html --omit=lib
 
 
 
