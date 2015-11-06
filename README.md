@@ -27,18 +27,19 @@ If everything works properly you will get a user.
 
 ## Integration Testing
 * start the tequila_server
-* python -m unittest discover -s integration_tests/ -p '*_test.py' -t ./
+* python run_integration_tests.py
 
 ## To run all tests
 * start the tequila_server
 * python -m unittest discover -v -p '*_test.py'
 
 ## Coverage.
-For now generates coverage for everything, need to change it to skip lib.
+To install coverage tool on your machine:
+sudo pip install coverage
 
-* sudo pip install coverage
+To run coverage analysis and generate a report:
 * coverage run run_unit_tests.py
-* coverage html -d coverage_html --omit=lib
+* coverage html
 
-
-
+Please note that the packages that are measured are listed in the file .coveragerc.
+If you add a new package, please add it to the source parameter in .coveragerc file.

@@ -21,3 +21,4 @@ libraries:
 skip_files:
 - integration_tests/.*
 - unit_tests/.*
+- run_unit_tests.py

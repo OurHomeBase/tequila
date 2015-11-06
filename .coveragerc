@@ -1,1 +1,6 @@
-#
+[run]
+source=persistence,api,utils
+
+[html]
+directory = coverage_html
+
