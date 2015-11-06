@@ -1,0 +1,4 @@
+[pylint]
+reports=n
+indent-string='  '
+docstring-min-length=9

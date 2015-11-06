@@ -4,7 +4,6 @@ from google.appengine.ext import ndb
 
 
 class User(ndb.Model):
-  #id = ndb.IntegerProperty()
   username = ndb.StringProperty()
   
   @property

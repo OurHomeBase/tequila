@@ -43,3 +43,17 @@ To run coverage analysis and generate a report:
 
 Please note that the packages that are measured are listed in the file .coveragerc.
 If you add a new package, please add it to the source parameter in .coveragerc file.
+
+# Code Style.
+Please run pylint before pushing code to the public repo.
+More info: http://www.pylint.org/
+
+To install pylint:
+
+sudo pip install pylint
+
+
+to run pylint:
+pylint api/ persistence/ utils/ unit_tests/ integration_tests/ run_unit_tests.py run_integration_tests.py 
+
+
