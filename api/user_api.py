@@ -29,15 +29,15 @@ def get_pw(username):
 def CreateUser():
   if not request.json:
     abort(400)
-  
+
   username = request.json['username']
   user = user_models.User.findByUsername(username)
   if not user:
     user = user_models.User(username=username)
-    user.put()   
-  
-  return jsonify(username=username)  
-    
+    user.put()
+
+  return jsonify(username=username)
+
 
 @app.route('/api/user/me')
 @oauth.require_oauth()

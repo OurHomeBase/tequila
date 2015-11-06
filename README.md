@@ -54,6 +54,7 @@ sudo pip install pylint
 
 
 to run pylint:
+
 pylint api/ persistence/ utils/ unit_tests/ integration_tests/ run_unit_tests.py run_integration_tests.py 
 
-
+TODO (yagasyants): Fix current lint errors.
