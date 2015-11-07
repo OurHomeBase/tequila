@@ -14,13 +14,12 @@ from persistence import oauth_models
 app = Flask(__name__, template_folder='templates')
 app.debug = True
 app.secret_key = 'secret'
-
 app.config['DEBUG'] = True
 
-oauth = OAuth2Provider(app)
-
 basic_auth = HTTPBasicAuth()
+oauth = OAuth2Provider(app)
 # pylint: enable=invalid-name
+
 
 
 @basic_auth.get_password
