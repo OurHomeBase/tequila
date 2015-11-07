@@ -3,19 +3,16 @@
 from datetime import datetime
 from datetime import timedelta
 
-from flask import Flask
 from flask_oauthlib.provider import OAuth2Provider
 from flask_httpauth import HTTPBasicAuth
 
 from persistence import user_models
 from persistence import oauth_models
 
-# pylint: disable=invalid-name
-app = Flask(__name__, template_folder='templates')
-app.debug = True
-app.secret_key = 'secret'
-app.config['DEBUG'] = True
+from api import common
 
+# pylint: disable=invalid-name
+app = common.app
 basic_auth = HTTPBasicAuth()
 oauth = OAuth2Provider(app)
 # pylint: enable=invalid-name

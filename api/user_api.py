@@ -1,6 +1,5 @@
 '''Api for User profile'''
 
-from flask import Flask
 from flask import request
 from flask import jsonify
 
@@ -10,12 +9,10 @@ from flask_httpauth import HTTPBasicAuth
 from persistence import oauth_models
 from flask import abort
 
-# pylint: disable=invalid-name
-app = Flask(__name__, template_folder='templates')
-app.debug = True
-app.secret_key = 'secret'
-app.config['DEBUG'] = True
+from api import common
 
+# pylint: disable=invalid-name
+app = common.app
 basic_auth = HTTPBasicAuth()
 oauth = oauth_api.oauth
 # pylint: disable=invalid-name
