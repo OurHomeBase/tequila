@@ -38,8 +38,8 @@ To install coverage tool on your machine:
 sudo pip install coverage
 
 To run coverage analysis and generate a report:
-* coverage run run_unit_tests.py
-* coverage html
+
+./coverage.sh
 
 Please note that the packages that are measured are listed in the file .coveragerc.
 If you add a new package, please add it to the source parameter in .coveragerc file.
@@ -55,6 +55,4 @@ sudo pip install pylint
 
 to run pylint:
 
-pylint api/ persistence/ utils/ unit_tests/ integration_tests/ run_unit_tests.py run_integration_tests.py 
-
-TODO (yagasyants): Fix current lint errors.
+./pylint.sh 
