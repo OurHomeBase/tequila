@@ -15,7 +15,7 @@ from api import common
 app = common.create_flask_app()
 basic_auth = HTTPBasicAuth()
 oauth = oauth_api.oauth
-# pylint: disable=invalid-name
+# pylint: enable=invalid-name
 
 
 @basic_auth.get_password
@@ -26,7 +26,7 @@ def get_pw(username):
 
 @app.route('/api/user/', methods=['POST'])
 @basic_auth.login_required
-def CreateUser():
+def create_user():
   '''Registers a new user.'''
   if not request.json:
     abort(400)
@@ -42,7 +42,7 @@ def CreateUser():
 
 @app.route('/api/user/me')
 @oauth.require_oauth()
-def me():
+def get_user():
   user_id = request.oauth.access_token.user_id
   user = user_models.User.find_by_id(user_id)
   return jsonify(username=user.username, test='yaya')
