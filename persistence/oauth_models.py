@@ -24,11 +24,11 @@ class Client(ndb.Model):
 
   @property
   def redirect_uris(self):
-    return [self.default_redirect_uri]
+    return (self.default_redirect_uri, )
 
   @property
   def default_scopes(self):
-    return ['email']
+    return ('email', )
 
   @classmethod
   def find_by_client_id(cls, client_id):

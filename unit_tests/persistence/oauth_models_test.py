@@ -40,7 +40,17 @@ class ClientTest(ndb_common_test.CommonNdbTest):
     redirect_uris = client.redirect_uris
 
     # Verify
-    self.assertListEqual(['unsupported'], redirect_uris)
+    self.assertEqual(('unsupported', ), redirect_uris)
+
+  def test_default_scopes_is_email(self):
+    # Setup.
+    client = oauth_models.Client(client_id='some_id', client_secret='some secret')
+
+    # Exercise.
+    default_scopes = client.default_scopes
+
+    # Verify.
+    self.assertEqual(('email', ), default_scopes)
 
   def test_find_by_client_id_returns_expected_client(self):
     # Setup.
