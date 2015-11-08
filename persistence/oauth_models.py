@@ -18,12 +18,12 @@ class Client(ndb.Model):
     return 'confidential'
 
   @property
-  def redirect_uris(self):
-    return []
+  def default_redirect_uri(self):
+    return 'unsupported'
 
   @property
-  def default_redirect_uri(self):
-    return ''
+  def redirect_uris(self):
+    return [self.default_redirect_uri]
 
   @property
   def default_scopes(self):
@@ -32,10 +32,8 @@ class Client(ndb.Model):
   @classmethod
   def find_by_client_id(cls, client_id):
     client_list = Client.query(Client.client_id == client_id).fetch(1)
-    if client_list:
-      return client_list[0]
-    else:
-      return None
+
+    return client_list[0] if client_list else None
 
 
 class Grant(ndb.Model):
