@@ -90,5 +90,50 @@ class GrantTest(ndb_common_test.CommonNdbTest):
     self.assertFalse(found_grant)
 
 
+class TokenTest(ndb_common_test.CommonNdbTest):
+  '''A class to test Token NDB model.'''
+
+  def test_find_all_by_client_user_id_returns_expected(self):
+    # Setup.
+    token1 = oauth_models.Token(client_id='c_id', user_id=123, access_token='ABC')
+    token1.put()
+    token2 = oauth_models.Token(client_id='c_id', user_id=123, access_token='DEF')
+    token2.put()
+
+    # Exercise.
+    list_tokens = oauth_models.Token.find_all_by_client_user_id('c_id', 123)
+
+    # Verify
+    self.assertTrue(list_tokens)
+    self.assertEqual(2, len(list_tokens))
+
+  def test_find_by_access_code_returns_expected(self):
+    # Setup.
+    created_token = oauth_models.Token(
+        client_id='c_id', user_id=123, access_token='XYZ')
+
+    created_token.put()
+
+    # Exercise.
+    found_token = oauth_models.Token.find_by_access_code('XYZ')
+
+    # Verify
+    self.assertTrue(found_token)
+    self.assertEqual(created_token.key, found_token.key)
+
+  def test_find_by_refresh_token_returns_expected(self):
+    # Setup.
+    created_token = oauth_models.Token(
+        client_id='c_id', user_id=123, refresh_token='XYZ')
+
+    created_token.put()
+
+    # Exercise.
+    found_token = oauth_models.Token.find_by_refresh_code('XYZ')
+
+    # Verify
+    self.assertTrue(found_token)
+    self.assertEqual(created_token.key, found_token.key)
+
 if __name__ == "__main__":
   unittest.main()

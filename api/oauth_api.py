@@ -46,7 +46,6 @@ def save_grant(client_id, code, request, *args, **kwargs):
       code=code['code'],
       redirect_uri=request.redirect_uri,
       scopes=[request.scopes],
-      #user=current_user(),
       expires=expires
   )
   grant.put()
@@ -80,13 +79,14 @@ def save_token(token, request, *args, **kwargs):
       access_token=token['access_token'],
       refresh_token=token['refresh_token'],
       token_type=token['token_type'],
-      p_scopes=token['scope'],
+      scopes=[token['scope']],
       expires=expires,
       client_id=request.client.client_id,
       user_id=request.user.id,
-      user=user
-  )
+      user=user)
+
   token.put()
+
   return token
 # pylint: enable=unused-argument
 

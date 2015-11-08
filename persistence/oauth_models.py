@@ -81,22 +81,22 @@ class Token(ndb.Model):
   refresh_token = ndb.StringProperty()
   expires = ndb.DateTimeProperty()
 
-  p_scopes = ndb.StringProperty()
-
-  @property
-  def scopes(self):
-    if self.p_scopes:
-      return self.p_scopes.split()
-    return []
+  scopes = ndb.StringProperty(repeated=True)
 
   @classmethod
   def find_all_by_client_user_id(cls, client_id, user_id):
-    return Token.query(Token.client_id == client_id, Token.user_id == user_id).fetch()
+    query = Token.query(Token.client_id == client_id, Token.user_id == user_id)
+
+    return query.fetch()
 
   @classmethod
   def find_by_access_code(cls, access_token):
-    return Token.query(Token.access_token == access_token).fetch(1)[0]
+    query = Token.query(Token.access_token == access_token)
+
+    return persistence_utils.fetch_first_or_none(query)
 
   @classmethod
   def find_by_refresh_code(cls, refresh_token):
-    return Token.query(Token.refresh_token == refresh_token).fetch(1)[0]
+    query = Token.query(Token.refresh_token == refresh_token)
+
+    return persistence_utils.fetch_first_or_none(query)
