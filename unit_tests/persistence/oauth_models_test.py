@@ -18,5 +18,19 @@ class OAuthUserTest(ndb_common_test.CommonNdbTest):
     # Verify
     self.assertTrue(created_user.key)
 
+
+class ClientTest(ndb_common_test.CommonNdbTest):
+  '''A class to test Client NDB model.'''
+
+  def test_client_type_confidential(self):
+    # Setup.
+    client = oauth_models.Client(client_id='some id', client_secret='some secret')
+
+    # Exercise.
+    client_type = client.client_type
+
+    # Verify
+    self.assertEqual('confidential', client_type)
+
 if __name__ == "__main__":
   unittest.main()

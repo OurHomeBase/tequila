@@ -9,11 +9,9 @@ class OAuthUser(ndb.Model):
 
 class Client(ndb.Model):
   '''Class to represent OAuth Client. It is typically one per platform.'''
+
   client_id = ndb.StringProperty()
   client_secret = ndb.StringProperty()
-
-  p_redirect_uris = ndb.StringProperty()
-  p_defaultscopes = ndb.StringProperty()
 
   @property
   def client_type(self):
@@ -21,19 +19,15 @@ class Client(ndb.Model):
 
   @property
   def redirect_uris(self):
-    if self.p_redirect_uris:
-      return self.p_redirect_uris.split()
     return []
 
   @property
   def default_redirect_uri(self):
-    return self.p_redirect_uris[0]
+    return ''
 
   @property
   def default_scopes(self):
-    if self.p_defaultscopes:
-      return self.p_defaultscopes.split()
-    return []
+    return ['email']
 
   @classmethod
   def find_by_client_id(cls, client_id):

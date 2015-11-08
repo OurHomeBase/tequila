@@ -22,17 +22,9 @@ def create_client():
   '''Creates a test client or returns an existing one.'''
   client = oauth_models.Client.find_by_client_id(constants.CLIENT_ID)
   if not client:
-    client = oauth_models.Client(
-        client_id=constants.CLIENT_ID,
-        client_secret=constants.CLIENT_SECRET,
-        p_redirect_uris=' '.join([
-            'http://localhost:8080/c/authorized',
-            'http://127.0.0.1:8080/c/authorized',
-            'http://127.0.1:8080/c/authorized',
-            'http://127.1:8080/c/authorized',
-            ]),
-        p_defaultscopes='email',
-        )
+    client = oauth_models.Client(client_id=constants.CLIENT_ID,
+                                 client_secret=constants.CLIENT_SECRET)
+
     client.put()
 
   return jsonify(
