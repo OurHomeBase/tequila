@@ -1,5 +1,6 @@
 '''The module stores user_models for authentication and authorization.'''
 from google.appengine.ext import ndb
+from persistence import persistence_utils
 
 # pylint: disable=too-few-public-methods
 class OAuthUser(ndb.Model):
@@ -31,9 +32,9 @@ class Client(ndb.Model):
 
   @classmethod
   def find_by_client_id(cls, client_id):
-    client_list = Client.query(Client.client_id == client_id).fetch(1)
+    query = Client.query(Client.client_id == client_id)
 
-    return client_list[0] if client_list else None
+    return persistence_utils.fetch_first_or_none(query)
 
 
 class Grant(ndb.Model):
@@ -51,21 +52,17 @@ class Grant(ndb.Model):
   redirect_uri = ndb.StringProperty()
   expires = ndb.DateTimeProperty()
 
-  p_scopes = ndb.StringProperty()
+  scopes = ndb.StringProperty(repeated=True)
 
   def delete(self):
     self.key.delete()
     return self
 
-  @property
-  def scopes(self):
-    if self.p_scopes:
-      return self.p_scopes.split()
-    return []
-
   @classmethod
   def find_by_client_id_and_code(cls, client_id, code):
-    return Grant.query(Grant.client_id == client_id, Grant.code == code).fetch(1)[0]
+    query = Grant.query(Grant.client_id == client_id, Grant.code == code)
+
+    return persistence_utils.fetch_first_or_none(query)
 
 
 class Token(ndb.Model):

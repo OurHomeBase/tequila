@@ -1,21 +1,13 @@
 '''A module to create OAuth client. It helps with integration testing.'''
 
-from flask import Flask
 from flask import jsonify
 
 from persistence import oauth_models
 from utils import constants
+from api import common
 
-from api import oauth_api
+app = common.create_flask_app() # pylint: disable=invalid-name
 
-# pylint: disable=invalid-name
-oauth = oauth_api.oauth
-app = Flask(__name__, template_folder='templates')
-# pylint: enable=invalid-name
-
-app.debug = True
-app.secret_key = 'secret'
-app.config['DEBUG'] = True
 
 @app.route('/api/client/create')
 def create_client():

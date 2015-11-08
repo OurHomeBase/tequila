@@ -1,6 +1,7 @@
 '''A module to store data models.'''
 
 from google.appengine.ext import ndb
+from persistence import persistence_utils
 
 
 class User(ndb.Model):
@@ -9,11 +10,13 @@ class User(ndb.Model):
 
   @classmethod
   def find_by_id(cls, key_id):
-    return User.query(User.key == ndb.Key(User, key_id)).fetch(1)[0]
+    query = User.query(User.key == ndb.Key(User, key_id))
+
+    return persistence_utils.fetch_first_or_none(query)
 
   @classmethod
   def find_by_username(cls, username):
-    list_users = User.query(User.username == username).fetch(1)
+    query = User.query(User.username == username)
 
-    return list_users[0] if list_users else None
+    return persistence_utils.fetch_first_or_none(query)
 

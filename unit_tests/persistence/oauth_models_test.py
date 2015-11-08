@@ -42,7 +42,7 @@ class ClientTest(ndb_common_test.CommonNdbTest):
     # Verify
     self.assertListEqual(['unsupported'], redirect_uris)
 
-  def test_find_by_client_id_returns_expected_client_if_exists(self):
+  def test_find_by_client_id_returns_expected_client(self):
     # Setup.
     created_client = oauth_models.Client(client_id='some_id', client_secret='some secret')
     created_client.put()
@@ -60,6 +60,34 @@ class ClientTest(ndb_common_test.CommonNdbTest):
 
     # Verify
     self.assertFalse(found_client)
+
+
+class GrantTest(ndb_common_test.CommonNdbTest):
+  '''A class to test Grant NDB model.'''
+
+  def test_find_by_client_id_and_code_returns_expected(self):
+    # Setup.
+    created_grant = oauth_models.Grant(client_id='some_id', code='xyz')
+    created_grant.put()
+
+    # Exercise.
+    found_grant = oauth_models.Grant.find_by_client_id_and_code('some_id', 'xyz')
+
+    # Verify
+    self.assertTrue(found_grant)
+    self.assertEqual(created_grant.key, found_grant.key)
+
+  def test_delete_removes_grant(self):
+    # Setup.
+    created_grant = oauth_models.Grant(client_id='some_id', code='xyz')
+    created_grant.put()
+    created_grant.delete()
+
+    # Exercise.
+    found_grant = oauth_models.Grant.find_by_client_id_and_code('some_id', 'xyz')
+
+    # Verify
+    self.assertFalse(found_grant)
 
 
 if __name__ == "__main__":
