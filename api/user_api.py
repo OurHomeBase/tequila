@@ -12,7 +12,7 @@ from flask import abort
 from api import common
 
 # pylint: disable=invalid-name
-app = common.app
+app = common.CreateFlaskApp()
 basic_auth = HTTPBasicAuth()
 oauth = oauth_api.oauth
 # pylint: disable=invalid-name
@@ -20,7 +20,7 @@ oauth = oauth_api.oauth
 
 @basic_auth.get_password
 def get_pw(username):
-  client = oauth_models.Client.findByClientId(username)
+  client = oauth_models.Client.find_by_client_id(username)
 
   return client.client_secret if client else None
 
@@ -32,7 +32,7 @@ def CreateUser():
     abort(400)
 
   username = request.json['username']
-  user = user_models.User.findByUsername(username)
+  user = user_models.User.find_by_username(username)
   if not user:
     user = user_models.User(username=username)
     user.put()
@@ -44,7 +44,7 @@ def CreateUser():
 @oauth.require_oauth()
 def me():
   user_id = request.oauth.access_token.user_id
-  user = user_models.User.findById(user_id)
+  user = user_models.User.find_by_id(user_id)
   return jsonify(username=user.username, test='yaya')
 
 @app.route('/api/user/she')

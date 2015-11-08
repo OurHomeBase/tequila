@@ -12,7 +12,7 @@ from persistence import oauth_models
 from api import common
 
 # pylint: disable=invalid-name
-app = common.app
+app = common.CreateFlaskApp()
 basic_auth = HTTPBasicAuth()
 oauth = OAuth2Provider(app)
 # pylint: enable=invalid-name
@@ -21,19 +21,19 @@ oauth = OAuth2Provider(app)
 
 @basic_auth.get_password
 def get_pw(username):
-  client = oauth_models.Client.findByClientId(username)
+  client = oauth_models.Client.find_by_client_id(username)
 
   return client.client_secret if client else None
 
 
 @oauth.clientgetter
 def load_client(client_id):
-  return oauth_models.Client.findByClientId(client_id)
+  return oauth_models.Client.find_by_client_id(client_id)
 
 
 @oauth.grantgetter
 def load_grant(client_id, code):
-  return oauth_models.Grant.findByClientIdAndCode(client_id, code)
+  return oauth_models.Grant.find_by_client_id_and_code(client_id, code)
 
 # pylint: disable=unused-argument
 @oauth.grantsetter
@@ -57,16 +57,16 @@ def save_grant(client_id, code, request, *args, **kwargs):
 @oauth.tokengetter
 def load_token(access_token=None, refresh_token=None):
   if access_token:
-    return oauth_models.Token.findByAccessCode(access_token)
+    return oauth_models.Token.find_by_access_code(access_token)
   elif refresh_token:
-    return oauth_models.Token.findByRefreshCode(refresh_token)
+    return oauth_models.Token.find_by_refresh_code(refresh_token)
 
 
 # pylint: disable=unused-argument
 @oauth.tokensetter
 def save_token(token, request, *args, **kwargs):
   '''Saves token to DB in association with the user.'''
-  old_tokens = oauth_models.Token.findAllByClientIdAndUserId(
+  old_tokens = oauth_models.Token.find_all_by_client_user_id(
       request.client.client_id, request.user.id)
   # make sure that every client has only one token connected to a user
   for old_token in old_tokens:
@@ -102,9 +102,9 @@ def token_handler():
 def get_user(username, password, client, request, *args, **kwargs):
   if not client:
     return None
-  user = user_models.User.findByUsername(username)
+  user = user_models.User.find_by_username(username)
 #   if not user.validate_password(password):
 #     return None
 
-  return oauth_models.OAuthUser(id=user.id)
+  return oauth_models.OAuthUser(id=user.key.id())
 # pylint: enable=unused-argument

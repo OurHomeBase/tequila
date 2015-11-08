@@ -11,18 +11,18 @@ class UserModelsTest(unittest.TestCase):
     self.testbed.init_datastore_v3_stub()
     self.testbed.init_memcache_stub()
     ndb.get_context().clear_cache()
-    
+
   def tearDown(self):
     self.testbed.deactivate()
-              
+
   def testFindByUserNameReturnsExpectedUser(self):
     # Setup.
     created_user = user_models.User(username='my_user')
     created_user.put()
-    
+
     # Exercise.
-    found_user = user_models.User.findByUsername('my_user')
-    
+    found_user = user_models.User.find_by_username('my_user')
+
     # Verify
     self.assertTrue(found_user)
     self.assertEqual(created_user.key, found_user.key)

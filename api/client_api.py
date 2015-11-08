@@ -20,7 +20,7 @@ app.config['DEBUG'] = True
 @app.route('/api/client/create')
 def create_client():
   '''Creates a test client or returns an existing one.'''
-  client = oauth_models.Client.findByClientId(constants.CLIENT_ID)
+  client = oauth_models.Client.find_by_client_id(constants.CLIENT_ID)
   if not client:
     client = oauth_models.Client(
         client_id=constants.CLIENT_ID,

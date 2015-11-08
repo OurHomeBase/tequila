@@ -1,14 +1,17 @@
 '''The module stores user_models for authentication and authorization.'''
 from google.appengine.ext import ndb
 
+# pylint: disable=too-few-public-methods
 class OAuthUser(ndb.Model):
-  id = ndb.IntegerProperty()
-
+  '''A class to represent OAuth User.'''
+  id = ndb.IntegerProperty() # pylint: disable=invalid-name
+# pylint: disable=too-few-public-methods
 
 class Client(ndb.Model):
+  '''Class to represent OAuth Client. It is typically one per platform.'''
   client_id = ndb.StringProperty()
   client_secret = ndb.StringProperty()
-  
+
   p_redirect_uris = ndb.StringProperty()
   p_defaultscopes = ndb.StringProperty()
 
@@ -33,16 +36,17 @@ class Client(ndb.Model):
     return []
 
   @classmethod
-  def findByClientId(cls, client_id):
+  def find_by_client_id(cls, client_id):
     client_list = Client.query(Client.client_id == client_id).fetch(1)
     if client_list:
       return client_list[0]
     else:
-      return None  
-                                 
+      return None
+
 
 class Grant(ndb.Model):
-  id = ndb.IntegerProperty()
+  '''Class to store OAuth Grant.'''
+  id = ndb.IntegerProperty() # pylint: disable=invalid-name
 
   user_id = ndb.IntegerProperty()
   user = ndb.StructuredProperty(OAuthUser)
@@ -66,14 +70,15 @@ class Grant(ndb.Model):
     if self.p_scopes:
       return self.p_scopes.split()
     return []
-  
+
   @classmethod
-  def findByClientIdAndCode(cls, client_id, code):
-    return Grant.query(Grant.client_id == client_id, Grant.code==code).fetch(1)[0]
+  def find_by_client_id_and_code(cls, client_id, code):
+    return Grant.query(Grant.client_id == client_id, Grant.code == code).fetch(1)[0]
 
 
 class Token(ndb.Model):
-  id = ndb.IntegerProperty()
+  '''Class to store OAuth Access and Refresh Tokens'''
+  id = ndb.IntegerProperty() # pylint: disable=invalid-name
   client_id = ndb.StringProperty()
   client = ndb.StructuredProperty(Client)
 
@@ -94,16 +99,15 @@ class Token(ndb.Model):
     if self.p_scopes:
       return self.p_scopes.split()
     return []
-  
+
   @classmethod
-  def findAllByClientIdAndUserId(cls, client_id, user_id):
-    return Token.query(Token.client_id==client_id, Token.user_id==user_id).fetch()
-  
+  def find_all_by_client_user_id(cls, client_id, user_id):
+    return Token.query(Token.client_id == client_id, Token.user_id == user_id).fetch()
+
   @classmethod
-  def findByAccessCode(cls, access_token):
+  def find_by_access_code(cls, access_token):
     return Token.query(Token.access_token == access_token).fetch(1)[0]
-  
+
   @classmethod
-  def findByRefreshCode(cls, refresh_token):
+  def find_by_refresh_code(cls, refresh_token):
     return Token.query(Token.refresh_token == refresh_token).fetch(1)[0]
-  
