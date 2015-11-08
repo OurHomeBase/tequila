@@ -12,7 +12,7 @@ from persistence import oauth_models
 from api import common
 
 # pylint: disable=invalid-name
-app = common.CreateFlaskApp()
+app = common.create_flask_app()
 basic_auth = HTTPBasicAuth()
 oauth = OAuth2Provider(app)
 # pylint: enable=invalid-name

@@ -12,7 +12,7 @@ from flask import abort
 from api import common
 
 # pylint: disable=invalid-name
-app = common.CreateFlaskApp()
+app = common.create_flask_app()
 basic_auth = HTTPBasicAuth()
 oauth = oauth_api.oauth
 # pylint: disable=invalid-name
