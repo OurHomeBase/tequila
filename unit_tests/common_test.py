@@ -16,3 +16,8 @@ class CommonNdbTest(unittest.TestCase):
 
   def tearDown(self):
     self.testbed.deactivate()
+
+def create_test_client(api_module):
+  api_module.app.config['TESTING'] = True
+
+  return api_module.app.test_client()

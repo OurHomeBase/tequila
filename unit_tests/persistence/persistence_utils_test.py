@@ -4,10 +4,10 @@ import unittest
 from persistence import persistence_utils
 from persistence import oauth_models
 
-from unit_tests.persistence import ndb_common_test
+from unit_tests import common_test
 
 # pylint: disable=missing-docstring
-class PersistenceUtilsTest(ndb_common_test.CommonNdbTest):
+class PersistenceUtilsTest(common_test.CommonNdbTest):
   '''Tests for persistence utils. '''
 
   def test_fetch_first_or_none_returns_first_if_exists(self):

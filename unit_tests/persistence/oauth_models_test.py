@@ -2,12 +2,12 @@
 
 import unittest
 
-from unit_tests.persistence import ndb_common_test
+from unit_tests import common_test
 from persistence import oauth_models
 
 
 # pylint: disable=missing-docstring
-class OAuthUserTest(ndb_common_test.CommonNdbTest):
+class OAuthUserTest(common_test.CommonNdbTest):
   '''A class to test OAuthUser NDB model.'''
 
   def test_create_oauth_user(self):
@@ -19,7 +19,7 @@ class OAuthUserTest(ndb_common_test.CommonNdbTest):
     self.assertTrue(created_user.key)
 
 
-class ClientTest(ndb_common_test.CommonNdbTest):
+class ClientTest(common_test.CommonNdbTest):
   '''A class to test Client NDB model.'''
 
   def test_client_type_confidential(self):
@@ -72,7 +72,7 @@ class ClientTest(ndb_common_test.CommonNdbTest):
     self.assertFalse(found_client)
 
 
-class GrantTest(ndb_common_test.CommonNdbTest):
+class GrantTest(common_test.CommonNdbTest):
   '''A class to test Grant NDB model.'''
 
   def test_find_by_client_id_and_code_returns_expected(self):
@@ -100,7 +100,7 @@ class GrantTest(ndb_common_test.CommonNdbTest):
     self.assertFalse(found_grant)
 
 
-class TokenTest(ndb_common_test.CommonNdbTest):
+class TokenTest(common_test.CommonNdbTest):
   '''A class to test Token NDB model.'''
 
   def test_find_all_by_client_user_id_returns_expected(self):
