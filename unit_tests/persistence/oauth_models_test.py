@@ -2,7 +2,7 @@
 
 import unittest
 
-from unit_tests import common_test
+from unit_tests.common import common_test
 from persistence import oauth_models
 
 

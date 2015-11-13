@@ -3,7 +3,7 @@
 import unittest
 
 from utils import constants
-from unit_tests import common_test
+from unit_tests.common import common_test
 from persistence import oauth_models
 from api import client_api
 import json
@@ -15,7 +15,7 @@ class ClientApiTest(common_test.CommonNdbTest):
 
   def setUp(self):
     common_test.CommonNdbTest.setUp(self)
-    self.app = common_test.create_test_client(client_api)
+    self.app = common_test.create_flask_test_client(client_api)
 
   def test_create_client_creates_if_not_exists(self):
     # Exercise.
@@ -27,9 +27,7 @@ class ClientApiTest(common_test.CommonNdbTest):
 
   def test_create_client_reads_if_exists(self):
     # Setup.
-    client = oauth_models.Client(client_id=constants.CLIENT_ID,
-                                 client_secret=constants.CLIENT_SECRET)
-    client.put()
+    client = common_test.create_oauth_test_client()
 
     # Exercise.
     response = self.app.get('/api/client/create')

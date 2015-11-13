@@ -43,7 +43,7 @@ def create_user():
 @app.route('/api/user/me')
 @oauth.require_oauth()
 def get_user():
-  user_id = request.oauth.access_token.user_id
+  user_id = common.get_user_id(request)
   user = user_models.User.find_by_id(user_id)
   return jsonify(username=user.username, test='yaya')
 

@@ -3,7 +3,7 @@
 import unittest
 
 from persistence import user_models
-from unit_tests import common_test
+from unit_tests.common import common_test
 
 # pylint: disable=missing-docstring
 class UserTest(common_test.CommonNdbTest):
