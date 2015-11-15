@@ -7,6 +7,7 @@ from flask_oauthlib.provider import OAuth2Provider
 from google.appengine.ext import ndb
 
 from persistence import oauth_models
+from persistence import user_models
 from utils import constants
 
 from api import oauth_api
@@ -19,6 +20,16 @@ app.config['DEBUG'] = True
 
 oauth = oauth_api.oauth
 
+@app.route('/api/client/janet')
+def janet():
+  user = user_models.User(username="janet@ourhomebase.co")
+  user.timeProfile = user_models.TimeProfile(workStatus="Full Time")
+  user.addresses = {'home':user_models.Address(city='Amsterdam'), 'work':user_models.Address(city='SF'), }
+  user.put()
+  
+  user1 = user_models.User.findByUsername("janet@ourhomebase.co")
+  
+  return user1.findAddressByType('home').city
 
 
 @app.route('/api/client/create')
