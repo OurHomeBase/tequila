@@ -3,13 +3,16 @@
 import unittest
 
 from persistence import oauth_models
+
 from unit_tests.common import test_utils
+# Disable require.oauth even though it is not used in the module oauth_api.
+# It is important because otherwise when run_unit_tests.py is executed it will
+# not be disabled.
+test_utils.disable_require_oauth()
 
 from api import oauth_api
 from utils import constants
 import mock
-
-import json
 
 
 # pylint: disable=missing-docstring
@@ -33,7 +36,7 @@ class OAuthApiTest(test_utils.CommonNdbTest):
     grant = oauth_models.Grant(client_id=constants.CLIENT_ID,
                                code='test_grant')
     grant.put()
-    
+
     # Exercise.
     loaded_grant = oauth_api.load_grant(constants.CLIENT_ID, 'test_grant')
 
@@ -44,9 +47,9 @@ class OAuthApiTest(test_utils.CommonNdbTest):
     # Setup.
     request = mock.MagicMock()
     request.scopes = 'email'
-    
+
     code_dict = {'code': 'test_grant'}
-    
+
     # Exercise.
     saved_grant = oauth_api.save_grant(constants.CLIENT_ID, code_dict, request)
 

@@ -29,14 +29,14 @@ def save_grant(client_id, code, request, *args, **kwargs): # pylint: disable=unu
   '''Saves grant in the DB.'''
   # decide the expires time yourself
   expires = datetime.utcnow() + timedelta(seconds=100)
-  
+
   grant = oauth_models.Grant(
       client_id=client_id,
       code=code['code'],
       scopes=[request.scopes],
       expires=expires)
   grant.put()
-  
+
   return grant
 
 
