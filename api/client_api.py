@@ -4,9 +4,9 @@ from flask import jsonify
 
 from persistence import oauth_models
 from utils import constants
-from api import common
+from api import app_utils
 
-app = common.create_flask_app() # pylint: disable=invalid-name
+app = app_utils.create_flask_app() # pylint: disable=invalid-name
 
 
 @app.route('/api/client/create')

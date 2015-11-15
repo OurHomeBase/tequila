@@ -3,10 +3,10 @@
 import unittest
 
 from persistence import user_models
-from unit_tests.common import common_test
+from unit_tests.common import test_utils
 
 # pylint: disable=missing-docstring
-class UserTest(common_test.CommonNdbTest):
+class UserTest(test_utils.CommonNdbTest):
   '''A class to test User NDB model.'''
 
   def test_find_by_username_returns_expected_user(self):

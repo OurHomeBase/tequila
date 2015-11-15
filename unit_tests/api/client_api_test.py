@@ -3,19 +3,19 @@
 import unittest
 
 from utils import constants
-from unit_tests.common import common_test
+from unit_tests.common import test_utils
 from persistence import oauth_models
 from api import client_api
 import json
 
 
 # pylint: disable=missing-docstring
-class ClientApiTest(common_test.CommonNdbTest):
+class ClientApiTest(test_utils.CommonNdbTest):
   '''A class to test client_api model.'''
 
   def setUp(self):
-    common_test.CommonNdbTest.setUp(self)
-    self.app = common_test.create_flask_test_client(client_api)
+    test_utils.CommonNdbTest.setUp(self)
+    self.app = test_utils.create_flask_test_client(client_api)
 
   def test_create_client_creates_if_not_exists(self):
     # Exercise.
@@ -27,7 +27,7 @@ class ClientApiTest(common_test.CommonNdbTest):
 
   def test_create_client_reads_if_exists(self):
     # Setup.
-    client = common_test.create_oauth_test_client()
+    client = test_utils.create_oauth_test_client()
 
     # Exercise.
     response = self.app.get('/api/client/create')

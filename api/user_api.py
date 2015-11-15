@@ -5,27 +5,15 @@ from flask import jsonify
 
 from persistence import user_models
 from api import oauth_api
-from flask_httpauth import HTTPBasicAuth
-from persistence import oauth_models
 from flask import abort
 
-from api import common
+from api import app_utils
 
-# pylint: disable=invalid-name
-app = common.create_flask_app()
-basic_auth = HTTPBasicAuth()
-oauth = oauth_api.oauth
-# pylint: enable=invalid-name
+app = app_utils.create_flask_app() # pylint: disable=invalid-name
 
-
-@basic_auth.get_password
-def get_pw(username):
-  client = oauth_models.Client.find_by_client_id(username)
-
-  return client.client_secret if client else None
 
 @app.route('/api/user/', methods=['POST'])
-@basic_auth.login_required
+@app_utils.basic_auth.login_required
 def create_user():
   '''Registers a new user.'''
   if not request.json:
@@ -37,17 +25,12 @@ def create_user():
     user = user_models.User(username=username)
     user.put()
 
-  return jsonify(username=username)
+  return jsonify(username=username, user_id=user.key.id())
 
 
 @app.route('/api/user/me')
-@oauth.require_oauth()
+@oauth_api.oauth.require_oauth()
 def get_user():
-  user_id = common.get_user_id(request)
+  user_id = app_utils.get_user_id(request)
   user = user_models.User.find_by_id(user_id)
   return jsonify(username=user.username, test='yaya')
-
-@app.route('/api/user/she')
-def she():
-  '''Test method without auth restriction.'''
-  return jsonify(test='yaya')

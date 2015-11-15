@@ -4,26 +4,15 @@ from datetime import datetime
 from datetime import timedelta
 
 from flask_oauthlib.provider import OAuth2Provider
-from flask_httpauth import HTTPBasicAuth
 
 from persistence import user_models
 from persistence import oauth_models
 
-from api import common
+from api import app_utils
 
-# pylint: disable=invalid-name
-app = common.create_flask_app()
-basic_auth = HTTPBasicAuth()
-oauth = OAuth2Provider(app)
-# pylint: enable=invalid-name
+app = app_utils.create_flask_app() # pylint: disable=invalid-name
+oauth = OAuth2Provider(app) # pylint: disable=invalid-name
 
-
-
-@basic_auth.get_password
-def get_pw(username):
-  client = oauth_models.Client.find_by_client_id(username)
-
-  return client.client_secret if client else None
 
 
 @oauth.clientgetter
@@ -92,7 +81,7 @@ def save_token(token, request, *args, **kwargs):
 
 
 @app.route('/oauth/token', methods=['GET', 'POST'])
-@basic_auth.login_required
+@app_utils.basic_auth.login_required
 @oauth.token_handler
 def token_handler():
   return None

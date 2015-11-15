@@ -7,17 +7,12 @@ import base64
 import json
 
 from utils import constants
+from unit_tests.common import test_utils
 
 # pylint: disable=missing-docstring
 def _wait_caching():
   # NDB needs time to store data in Cache.
   time.sleep(0.1)
-
-def _create_basic_auth_headers():
-  client_id_secret = '{}:{}'.format(constants.CLIENT_ID,
-                                    constants.CLIENT_SECRET)
-
-  return {'Authorization': 'Basic {}'.format(base64.b64encode(client_id_secret))}
 
 class OAuthApiTest(unittest.TestCase):
 
@@ -30,12 +25,12 @@ class OAuthApiTest(unittest.TestCase):
 
   def _create_client(self):
     client_request = requests.get("http://localhost:8080/api/client/create",
-                                  headers=_create_basic_auth_headers())
+                                  headers=test_utils.create_basic_auth_headers())
     self.assertEqual(200, client_request.status_code)
     self.assertEqual(constants.CLIENT_ID, client_request.json()['client_id'])
 
   def _create_user(self):
-    headers = _create_basic_auth_headers()
+    headers = test_utils.create_basic_auth_headers()
     headers['Content-Type'] = 'application/json'
     user_request = requests.post("http://localhost:8080/api/user/",
                                  headers=headers,
@@ -54,7 +49,7 @@ class OAuthApiTest(unittest.TestCase):
     # Execute.
     token_request = requests.post("http://localhost:8080/oauth/token",
                                   data=grant_request_data,
-                                  headers=_create_basic_auth_headers())
+                                  headers=test_utils.create_basic_auth_headers())
 
     token_data = token_request.json()
 
@@ -90,7 +85,7 @@ class OAuthApiTest(unittest.TestCase):
 
     token_request = requests.post("http://localhost:8080/oauth/token",
                                   data=grant_request_data,
-                                  headers=_create_basic_auth_headers())
+                                  headers=test_utils.create_basic_auth_headers())
 
     access_token = token_request.json()['access_token']
 

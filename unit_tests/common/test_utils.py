@@ -6,9 +6,10 @@ from google.appengine.ext import testbed
 from flask_oauthlib import provider
 from mock import patch
 
-from api import common
+from api import app_utils
 from utils import constants
 from persistence import oauth_models
+import base64
 
 class CommonNdbTest(unittest.TestCase):
   '''Class that prepares testing for NDB.'''
@@ -55,6 +56,14 @@ def mock_get_user_id(test_case, user_id):
     test_object: instance of unittest.TestCase.
     user_id: an int.
   '''
-  patcher = patch.object(common, 'get_user_id', return_value=user_id)
+  patcher = patch.object(app_utils, 'get_user_id', return_value=user_id)
   patcher.start()
   test_case.addCleanup(patcher.stop)
+
+def create_basic_auth_headers():
+  client_id_secret = '{}:{}'.format(constants.CLIENT_ID,
+                                    constants.CLIENT_SECRET)
+
+  return {'Authorization': 'Basic {}'.format(base64.b64encode(client_id_secret))}
+
+
