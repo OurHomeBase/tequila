@@ -75,16 +75,7 @@ def save_token(token, request, *args, **kwargs):
   token.put()
 
   return token
-# pylint: enable=unused-argument
 
-
-@app.route('/oauth/token', methods=['GET', 'POST'])
-@app_utils.basic_auth.login_required
-@oauth.token_handler
-def token_handler():
-  return None
-
-# pylint: disable=unused-argument
 @oauth.usergetter
 def get_user(username, password, client, request, *args, **kwargs):
   if not client:
@@ -95,3 +86,11 @@ def get_user(username, password, client, request, *args, **kwargs):
 
   return oauth_models.OAuthUser(id=user.key.id())
 # pylint: enable=unused-argument
+
+
+@app.route('/oauth/token', methods=['GET', 'POST'])
+@app_utils.basic_auth.login_required
+@oauth.token_handler
+def token_handler():
+  return None
+
