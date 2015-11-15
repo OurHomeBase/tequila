@@ -24,22 +24,20 @@ def load_client(client_id):
 def load_grant(client_id, code):
   return oauth_models.Grant.find_by_client_id_and_code(client_id, code)
 
-# pylint: disable=unused-argument
 @oauth.grantsetter
-def save_grant(client_id, code, request, *args, **kwargs):
+def save_grant(client_id, code, request, *args, **kwargs): # pylint: disable=unused-argument
   '''Saves grant in the DB.'''
   # decide the expires time yourself
   expires = datetime.utcnow() + timedelta(seconds=100)
+  
   grant = oauth_models.Grant(
       client_id=client_id,
       code=code['code'],
-      redirect_uri=request.redirect_uri,
       scopes=[request.scopes],
-      expires=expires
-  )
+      expires=expires)
   grant.put()
+  
   return grant
-# pylint: enable=unused-argument
 
 
 @oauth.tokengetter
