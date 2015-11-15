@@ -1,48 +1,45 @@
 '''The module stores user_models for authentication and authorization.'''
 from google.appengine.ext import ndb
+from persistence import persistence_utils
 
+# pylint: disable=too-few-public-methods
 class OAuthUser(ndb.Model):
-  id = ndb.IntegerProperty()
-
+  '''A class to represent OAuth User.'''
+  id = ndb.IntegerProperty() # pylint: disable=invalid-name
+# pylint: disable=too-few-public-methods
 
 class Client(ndb.Model):
+  '''Class to represent OAuth Client. It is typically one per platform.'''
+
   client_id = ndb.StringProperty()
   client_secret = ndb.StringProperty()
-  
-  p_redirect_uris = ndb.StringProperty()
-  p_defaultscopes = ndb.StringProperty()
 
   @property
   def client_type(self):
     return 'confidential'
 
   @property
-  def redirect_uris(self):
-    if self.p_redirect_uris:
-      return self.p_redirect_uris.split()
-    return []
+  def default_redirect_uri(self):
+    return 'unsupported'
 
   @property
-  def default_redirect_uri(self):
-    return self.p_redirect_uris[0]
+  def redirect_uris(self):
+    return (self.default_redirect_uri, )
 
   @property
   def default_scopes(self):
-    if self.p_defaultscopes:
-      return self.p_defaultscopes.split()
-    return []
+    return ('email', )
 
   @classmethod
-  def findByClientId(cls, client_id):
-    client_list = Client.query(Client.client_id == client_id).fetch(1)
-    if client_list:
-      return client_list[0]
-    else:
-      return None  
-                                 
+  def find_by_client_id(cls, client_id):
+    query = Client.query(Client.client_id == client_id)
+
+    return persistence_utils.fetch_first_or_none(query)
+
 
 class Grant(ndb.Model):
-  id = ndb.IntegerProperty()
+  '''Class to store OAuth Grant.'''
+  id = ndb.IntegerProperty() # pylint: disable=invalid-name
 
   user_id = ndb.IntegerProperty()
   user = ndb.StructuredProperty(OAuthUser)
@@ -55,25 +52,22 @@ class Grant(ndb.Model):
   redirect_uri = ndb.StringProperty()
   expires = ndb.DateTimeProperty()
 
-  p_scopes = ndb.StringProperty()
+  scopes = ndb.StringProperty(repeated=True)
 
   def delete(self):
     self.key.delete()
     return self
 
-  @property
-  def scopes(self):
-    if self.p_scopes:
-      return self.p_scopes.split()
-    return []
-  
   @classmethod
-  def findByClientIdAndCode(cls, client_id, code):
-    return Grant.query(Grant.client_id == client_id, Grant.code==code).fetch(1)[0]
+  def find_by_client_id_and_code(cls, client_id, code):
+    query = Grant.query(Grant.client_id == client_id, Grant.code == code)
+
+    return persistence_utils.fetch_first_or_none(query)
 
 
 class Token(ndb.Model):
-  id = ndb.IntegerProperty()
+  '''Class to store OAuth Access and Refresh Tokens'''
+  id = ndb.IntegerProperty() # pylint: disable=invalid-name
   client_id = ndb.StringProperty()
   client = ndb.StructuredProperty(Client)
 
@@ -87,23 +81,22 @@ class Token(ndb.Model):
   refresh_token = ndb.StringProperty()
   expires = ndb.DateTimeProperty()
 
-  p_scopes = ndb.StringProperty()
+  scopes = ndb.StringProperty(repeated=True)
 
-  @property
-  def scopes(self):
-    if self.p_scopes:
-      return self.p_scopes.split()
-    return []
-  
   @classmethod
-  def findAllByClientIdAndUserId(cls, client_id, user_id):
-    return Token.query(Token.client_id==client_id, Token.user_id==user_id).fetch()
-  
+  def find_all_by_client_user_id(cls, client_id, user_id):
+    query = Token.query(Token.client_id == client_id, Token.user_id == user_id)
+
+    return query.fetch()
+
   @classmethod
-  def findByAccessCode(cls, access_token):
-    return Token.query(Token.access_token == access_token).fetch(1)[0]
-  
+  def find_by_access_code(cls, access_token):
+    query = Token.query(Token.access_token == access_token)
+
+    return persistence_utils.fetch_first_or_none(query)
+
   @classmethod
-  def findByRefreshCode(cls, refresh_token):
-    return Token.query(Token.refresh_token == refresh_token).fetch(1)[0]
-  
+  def find_by_refresh_code(cls, refresh_token):
+    query = Token.query(Token.refresh_token == refresh_token)
+
+    return persistence_utils.fetch_first_or_none(query)

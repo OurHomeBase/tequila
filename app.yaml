@@ -1,4 +1,4 @@
-application: hello-flask-app-engine
+application: tequila
 version: 1
 runtime: python27
 api_version: 1
@@ -19,4 +19,6 @@ libraries:
   version: "0.15"
 
 skip_files:
-- integration_tests/.*  
+- integration_tests/.*
+- unit_tests/.*
+- run_unit_tests.py
