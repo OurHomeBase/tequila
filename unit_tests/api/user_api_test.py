@@ -5,6 +5,8 @@ import unittest
 from persistence import user_models
 
 from unit_tests.common import test_utils
+# It is important to disable it before user_api is imported. Because otherwise the
+# decorator oauth.require_oauth will be already applied.
 test_utils.disable_require_oauth()
 
 from api import user_api

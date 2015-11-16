@@ -24,22 +24,20 @@ def load_client(client_id):
 def load_grant(client_id, code):
   return oauth_models.Grant.find_by_client_id_and_code(client_id, code)
 
-# pylint: disable=unused-argument
 @oauth.grantsetter
-def save_grant(client_id, code, request, *args, **kwargs):
+def save_grant(client_id, code, request, *args, **kwargs): # pylint: disable=unused-argument
   '''Saves grant in the DB.'''
   # decide the expires time yourself
   expires = datetime.utcnow() + timedelta(seconds=100)
+
   grant = oauth_models.Grant(
       client_id=client_id,
       code=code['code'],
-      redirect_uri=request.redirect_uri,
       scopes=[request.scopes],
-      expires=expires
-  )
+      expires=expires)
   grant.put()
+
   return grant
-# pylint: enable=unused-argument
 
 
 @oauth.tokengetter
@@ -77,16 +75,7 @@ def save_token(token, request, *args, **kwargs):
   token.put()
 
   return token
-# pylint: enable=unused-argument
 
-
-@app.route('/oauth/token', methods=['GET', 'POST'])
-@app_utils.basic_auth.login_required
-@oauth.token_handler
-def token_handler():
-  return None
-
-# pylint: disable=unused-argument
 @oauth.usergetter
 def get_user(username, password, client, request, *args, **kwargs):
   if not client:
@@ -97,3 +86,11 @@ def get_user(username, password, client, request, *args, **kwargs):
 
   return oauth_models.OAuthUser(id=user.key.id())
 # pylint: enable=unused-argument
+
+
+@app.route('/oauth/token', methods=['GET', 'POST'])
+@app_utils.basic_auth.login_required
+@oauth.token_handler
+def token_handler():
+  return None
+
