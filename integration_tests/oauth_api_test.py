@@ -20,8 +20,13 @@ class OAuthApiTest(unittest.TestCase):
     self._create_client()
     _wait_caching()
 
+    self._delete_user()
+
     self._create_user()
     _wait_caching()
+
+  def tearDown(self):
+    self._delete_user()
 
   def _create_client(self):
     client_request = requests.get("http://localhost:8080/api/client/create",
@@ -34,16 +39,26 @@ class OAuthApiTest(unittest.TestCase):
     headers['Content-Type'] = 'application/json'
     user_request = requests.post("http://localhost:8080/api/user/",
                                  headers=headers,
-                                 data=json.dumps({'email': 'my@test.com'}))
+                                 data=json.dumps({'email': 'my@test.com',
+                                                  'password': 'qwerty'}))
 
     self.assertEqual(200, user_request.status_code)
     self.assertEqual('my@test.com', user_request.json()['email'])
+
+  def _delete_user(self):
+    headers = self._get_authorization_headers('my@test.com', 'qwerty')
+    if headers:
+      response = requests.delete('http://localhost:8080/api/user/', headers=headers)
+
+      self.assertEqual(200, response.status_code)
+
+      _wait_caching()
 
   def test_get_access_token_returns_correct_token(self):
     # Setup.
     grant_request_data = {'grant_type': 'password',
                           'username': 'my@test.com',
-                          'password': 'A3ddj3w',
+                          'password': 'qwerty',
                           'client_id': constants.CLIENT_ID}
 
     # Execute.
@@ -65,7 +80,7 @@ class OAuthApiTest(unittest.TestCase):
     # Setup.
     grant_request_data = {'grant_type': 'password',
                           'username': 'my@test.com',
-                          'password': 'A3ddj3w',
+                          'password': 'qwerty',
                           'client_id': constants.CLIENT_ID}
 
     # Execute.
@@ -78,29 +93,35 @@ class OAuthApiTest(unittest.TestCase):
 
   def test_access_protected_api_returns_correct_data_when_authorized(self):
     # Setup.
-    grant_request_data = {'grant_type': 'password',
-                          'username': 'my@test.com',
-                          'password': 'A3ddj3w',
-                          'client_id': constants.CLIENT_ID}
-
-    token_request = requests.post("http://localhost:8080/oauth/token",
-                                  data=grant_request_data,
-                                  headers=test_utils.create_basic_auth_headers())
-
-    access_token = token_request.json()['access_token']
-
-    # Need to wait before using the token to make sure it is saved in cache.
-    _wait_caching()
+    headers = self._get_authorization_headers('my@test.com', 'qwerty')
 
     # Execute.
-    headers = {'Authorization': 'Bearer {}'.format(access_token)}
-
     user_me_request = requests.get('http://localhost:8080/api/user/me', headers=headers)
     user_me_data = user_me_request.json()
 
     # Verify.
     self.assertTrue(user_me_data)
     self.assertEqual('my@test.com', user_me_data['email'])
+
+  def _get_authorization_headers(self, email, password):
+    grant_request_data = {'grant_type': 'password',
+                          'username': email,
+                          'password': password,
+                          'client_id': constants.CLIENT_ID}
+
+    token_response = requests.post("http://localhost:8080/oauth/token",
+                                   data=grant_request_data,
+                                   headers=test_utils.create_basic_auth_headers())
+
+    if token_response.status_code == 200:
+      access_token = token_response.json()['access_token']
+
+      # Need to wait before using the token to make sure it is saved in cache.
+      _wait_caching()
+
+      return {'Authorization': 'Bearer {}'.format(access_token)}
+    else:
+      return None
 
 if __name__ == '__main__':
   unittest.main()

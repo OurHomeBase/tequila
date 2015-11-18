@@ -128,13 +128,13 @@ class OAuthApiTest(test_utils.CommonNdbTest):
 
   def test_get_user_returns_existing_user(self):
     # Setup.
-    user = user_models.User(email='my@test.com')
+    user = user_models.User.create('my@test.com', 'qwerty')
     user.put()
 
     request = mock.MagicMock()
 
     # Exercise.
-    loaded_user = oauth_api.get_user('my@test.com', '', self.client, request)
+    loaded_user = oauth_api.get_user('my@test.com', 'qwerty', self.client, request)
 
     # Verify
     self.assertTrue(isinstance(loaded_user, oauth_models.OAuthUser))
@@ -142,12 +142,25 @@ class OAuthApiTest(test_utils.CommonNdbTest):
 
   def test_get_user_returns_none_if_no_client(self):
     # Setup.
-    user = user_models.User(email='my@test.com')
+    user = user_models.User.create('my@test.com', 'qwerty')
     user.put()
 
     request = mock.MagicMock()
     # Exercise.
-    loaded_user = oauth_api.get_user('my@test.com', '', None, request)
+    loaded_user = oauth_api.get_user('my@test.com', 'qwerty', None, request)
+
+    # Verify
+    self.assertEqual(None, loaded_user)
+
+  def test_get_user_returns_none_if_incorrect_password(self):
+    # Setup.
+    user = user_models.User.create('my@test.com', 'qwerty')
+    user.put()
+
+    request = mock.MagicMock()
+
+    # Exercise.
+    loaded_user = oauth_api.get_user('my@test.com', 'xyz', self.client, request)
 
     # Verify
     self.assertEqual(None, loaded_user)
@@ -155,12 +168,12 @@ class OAuthApiTest(test_utils.CommonNdbTest):
   def test_token_handler_creates_token(self):
     # Setup.
     headers = test_utils.create_basic_auth_headers()
-    user = user_models.User(email='my@test.com')
+    user = user_models.User.create('my@test.com', 'qwerty')
     user.put()
 
     grant_request_data = {'grant_type': 'password',
                           'username': 'my@test.com',
-                          'password': 'non_set',
+                          'password': 'qwerty',
                           'client_id': constants.CLIENT_ID}
 
     # Exercise.

@@ -42,7 +42,8 @@ class UserApiTest(test_utils.CommonNdbTest):
     headers = test_utils.create_basic_auth_headers()
     headers['Content-Type'] = 'application/json'
 
-    user_data = json.dumps({'email': 'my@test.com'})
+    user_data = json.dumps({'email': 'my@test.com',
+                            'password': 'qwerty'})
 
     # Exercise.
     response = self.app.post('/api/user/',
@@ -53,7 +54,9 @@ class UserApiTest(test_utils.CommonNdbTest):
     self.assertEqual(200, response.status_code)
     user_json = json.loads(response.data)
     self.assertEqual('my@test.com', user_json['email'])
-    self.assertTrue(user_models.User.find_by_email('my@test.com'))
+    found_user = user_models.User.find_by_email('my@test.com')
+    self.assertTrue(found_user)
+    self.assertTrue(found_user.check_password('qwerty'))
 
   def test_create_user_finds_if_exists(self):
     # Setup.
@@ -63,7 +66,7 @@ class UserApiTest(test_utils.CommonNdbTest):
     headers = test_utils.create_basic_auth_headers()
     headers['Content-Type'] = 'application/json'
 
-    user_data = json.dumps({'email': 'my@test.com'})
+    user_data = json.dumps({'email': 'my@test.com', 'password': 'qwerty'})
 
     # Exercise.
     response = self.app.post('/api/user/',
@@ -105,6 +108,23 @@ class UserApiTest(test_utils.CommonNdbTest):
     # Verify
     self.assertEqual(401, response.status_code)
     self.assertFalse(user_models.User.find_by_email('my@test.com'))
+
+  def test_delete_user_deletes_if_exists(self):
+    # Setup.
+    user = user_models.User.create('my@test.com', 'qwerty')
+    user.put()
+    test_utils.mock_get_user_id(self, user.key.id())
+
+    headers = test_utils.create_basic_auth_headers()
+    headers['Content-Type'] = 'application/json'
+
+    # Exercise.
+    response = self.app.delete('/api/user/', headers=headers)
+
+    # Verify
+    self.assertEqual(200, response.status_code)
+    found_user = user_models.User.find_by_email('my@test.com')
+    self.assertFalse(found_user)
 
 
 if __name__ == "__main__":

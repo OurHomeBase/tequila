@@ -80,9 +80,10 @@ def save_token(token, request, *args, **kwargs):
 def get_user(username, password, client, request, *args, **kwargs):
   if not client:
     return None
+
   user = user_models.User.find_by_email(username)
-#   if not user.validate_password(password):
-#     return None
+  if not user.check_password(password):
+    return None
 
   return oauth_models.OAuthUser(id=user.key.id())
 # pylint: enable=unused-argument

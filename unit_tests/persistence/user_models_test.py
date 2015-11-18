@@ -22,7 +22,7 @@ class UserTest(test_utils.CommonNdbTest):
     self.assertTrue(found_user)
     self.assertEqual('my@test.com', found_user.email)
 
-  def test_create_user_check_hash_saved(self):
+  def test_create_user_check_password_hash_saved(self):
     # Exercise.
     created_user = user_models.User.create(email='my@test.com',
                                            password='my_pass')
@@ -32,7 +32,30 @@ class UserTest(test_utils.CommonNdbTest):
     user = user_models.User.find_by_email('my@test.com')
     password_hash = user.password_hash
     self.assertTrue(password_hash)
+
+  def test_check_password_works_true_for_correct_password(self):
+    # Setup.
+    created_user = user_models.User.create(email='my@test.com',
+                                           password='my_pass')
+    created_user.put()
+
+    user = user_models.User.find_by_email('my@test.com')
+
+    # Exercise.
+    # Verify
     self.assertTrue(user.check_password('my_pass'))
+
+  def test_check_password_works_false_for_incorrect_password(self):
+    # Setup.
+    created_user = user_models.User.create(email='my@test.com',
+                                           password='my_pass')
+    created_user.put()
+
+    user = user_models.User.find_by_email('my@test.com')
+
+    # Exercise.
+    # Verify
+    self.assertFalse(user.check_password('his_pass'))
 
   def test_find_by_email_returns_expected_user(self):
     # Setup.

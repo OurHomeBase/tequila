@@ -20,9 +20,11 @@ def create_user():
     abort(400)
 
   email = request.json['email']
+  password = request.json['password']
+
   user = user_models.User.find_by_email(email)
   if not user:
-    user = user_models.User(email=email)
+    user = user_models.User.create(email, password)
     user.put()
 
   return jsonify(email=email, user_id=user.key.id())
@@ -34,3 +36,13 @@ def get_user():
   user_id = app_utils.get_user_id(request)
   user = user_models.User.find_by_id(user_id)
   return jsonify(email=user.email)
+
+
+@app.route('/api/user/', methods=['DELETE'])
+@oauth_api.oauth.require_oauth()
+def delete_user():
+  user_id = app_utils.get_user_id(request)
+  user = user_models.User.find_by_id(user_id)
+  user.key.delete()
+
+  return jsonify(success=True)
