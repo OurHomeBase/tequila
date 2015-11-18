@@ -23,6 +23,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+.DS_Store
 
 
 # PyInstaller
@@ -62,3 +63,5 @@ target/
 .project
 .pydevproject
 .settings/
+.metadata/
+

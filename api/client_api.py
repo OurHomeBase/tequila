@@ -8,7 +8,6 @@ from api import app_utils
 
 app = app_utils.create_flask_app() # pylint: disable=invalid-name
 
-
 @app.route('/api/client/create')
 def create_client():
   '''Creates a test client or returns an existing one.'''
