@@ -34,15 +34,15 @@ class OAuthApiTest(unittest.TestCase):
     headers['Content-Type'] = 'application/json'
     user_request = requests.post("http://localhost:8080/api/user/",
                                  headers=headers,
-                                 data=json.dumps({'username': 'sss'}))
+                                 data=json.dumps({'email': 'my@test.com'}))
 
     self.assertEqual(200, user_request.status_code)
-    self.assertEqual('sss', user_request.json()['username'])
+    self.assertEqual('my@test.com', user_request.json()['email'])
 
   def test_get_access_token_returns_correct_token(self):
     # Setup.
     grant_request_data = {'grant_type': 'password',
-                          'username': 'sss',
+                          'username': 'my@test.com',
                           'password': 'A3ddj3w',
                           'client_id': constants.CLIENT_ID}
 
@@ -58,13 +58,13 @@ class OAuthApiTest(unittest.TestCase):
     self.assertTrue(token_data['access_token'])
 
   def test_get_access_token_denies_if_basic_auth_fails(self):
-    client_id_secret = '{}:{}'.format(constants.CLIENT_ID, 'some passwors')
+    client_id_secret = '{}:{}'.format(constants.CLIENT_ID, 'some password')
 
     headers = {'Authorization': 'Basic {}'.format(base64.b64encode(client_id_secret))}
 
     # Setup.
     grant_request_data = {'grant_type': 'password',
-                          'username': 'sss',
+                          'username': 'my@test.com',
                           'password': 'A3ddj3w',
                           'client_id': constants.CLIENT_ID}
 
@@ -79,7 +79,7 @@ class OAuthApiTest(unittest.TestCase):
   def test_access_protected_api_returns_correct_data_when_authorized(self):
     # Setup.
     grant_request_data = {'grant_type': 'password',
-                          'username': 'sss',
+                          'username': 'my@test.com',
                           'password': 'A3ddj3w',
                           'client_id': constants.CLIENT_ID}
 
@@ -100,7 +100,7 @@ class OAuthApiTest(unittest.TestCase):
 
     # Verify.
     self.assertTrue(user_me_data)
-    self.assertEqual('sss', user_me_data['username'])
+    self.assertEqual('my@test.com', user_me_data['email'])
 
 if __name__ == '__main__':
   unittest.main()

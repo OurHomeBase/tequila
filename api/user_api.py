@@ -19,13 +19,13 @@ def create_user():
   if not request.json:
     abort(400)
 
-  username = request.json['username']
-  user = user_models.User.find_by_username(username)
+  email = request.json['email']
+  user = user_models.User.find_by_email(email)
   if not user:
-    user = user_models.User(username=username)
+    user = user_models.User(email=email)
     user.put()
 
-  return jsonify(username=username, user_id=user.key.id())
+  return jsonify(email=email, user_id=user.key.id())
 
 
 @app.route('/api/user/me')
@@ -33,4 +33,4 @@ def create_user():
 def get_user():
   user_id = app_utils.get_user_id(request)
   user = user_models.User.find_by_id(user_id)
-  return jsonify(username=user.username, test='yaya')
+  return jsonify(email=user.email)

@@ -32,10 +32,9 @@ class Address(ndb.Model):
 
 class User(ndb.Model):
   '''Stores basic user properties.'''
-  username = ndb.StringProperty()
+  email = ndb.StringProperty()
   password_hash = ndb.StringProperty()
 
-  email = ndb.StringProperty()
   emailVerified = ndb.BooleanProperty()
   name = ndb.StringProperty()
 
@@ -46,10 +45,10 @@ class User(ndb.Model):
   accountStatus = ndb.IntegerProperty(choices=_ACCOUNT_STATUS_CHOICES, default=1)
 
   @classmethod
-  def create(cls, username, password):
+  def create(cls, email, password):
     password_hash = generate_password_hash(password)
 
-    return cls(username=username, password_hash=password_hash)
+    return cls(email=email, password_hash=password_hash)
 
   def check_password(self, password):
     return check_password_hash(str(self.password_hash), password)
@@ -61,16 +60,10 @@ class User(ndb.Model):
     return persistence_utils.fetch_first_or_none(query)
 
   @classmethod
-  def find_by_username(cls, username):
-    query = User.query(User.username == username)
+  def find_by_email(cls, email):
+    query = User.query(User.email == email)
 
     return persistence_utils.fetch_first_or_none(query)
-
-  @classmethod
-  def find_by_email(cls, email):
-    list_users = User.query(User.email == email).fetch(1)
-
-    return list_users[0] if list_users else None
 
   def find_address_by_type(self, addr_type=_ADDR_DEFAULT_TYPE):
     for addr in self.addresses:

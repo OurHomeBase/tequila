@@ -25,7 +25,7 @@ class UserApiTest(test_utils.CommonNdbTest):
 
   def test_get_user_returns_user_if_not_exists(self):
     # Setup.
-    user = user_models.User(username='test_user')
+    user = user_models.User(email='my@test.com')
     user.put()
     test_utils.mock_get_user_id(self, user.key.id())
 
@@ -35,14 +35,14 @@ class UserApiTest(test_utils.CommonNdbTest):
     # Verify
     self.assertEqual(200, response.status_code)
     user_json = json.loads(response.data)
-    self.assertEqual('test_user', user_json['username'])
+    self.assertEqual('my@test.com', user_json['email'])
 
   def test_create_user_creates_if_not_exists(self):
     # Setup.
     headers = test_utils.create_basic_auth_headers()
     headers['Content-Type'] = 'application/json'
 
-    user_data = json.dumps({'username': 'test_user'})
+    user_data = json.dumps({'email': 'my@test.com'})
 
     # Exercise.
     response = self.app.post('/api/user/',
@@ -52,18 +52,18 @@ class UserApiTest(test_utils.CommonNdbTest):
     # Verify
     self.assertEqual(200, response.status_code)
     user_json = json.loads(response.data)
-    self.assertEqual('test_user', user_json['username'])
-    self.assertTrue(user_models.User.find_by_username('test_user'))
+    self.assertEqual('my@test.com', user_json['email'])
+    self.assertTrue(user_models.User.find_by_email('my@test.com'))
 
   def test_create_user_finds_if_exists(self):
     # Setup.
-    user = user_models.User(username='test_user')
+    user = user_models.User(email='my@test.com')
     user.put()
 
     headers = test_utils.create_basic_auth_headers()
     headers['Content-Type'] = 'application/json'
 
-    user_data = json.dumps({'username': 'test_user'})
+    user_data = json.dumps({'email': 'my@test.com'})
 
     # Exercise.
     response = self.app.post('/api/user/',
@@ -73,14 +73,14 @@ class UserApiTest(test_utils.CommonNdbTest):
     # Verify
     self.assertEqual(200, response.status_code)
     user_json = json.loads(response.data)
-    self.assertEqual('test_user', user_json['username'])
+    self.assertEqual('my@test.com', user_json['email'])
     self.assertEqual(user.key.id(), user_json['user_id'])
 
   def test_create_user_fails_if_not_json(self):
     # Setup.
     headers = test_utils.create_basic_auth_headers()
 
-    user_data = json.dumps({'username': 'test_user'})
+    user_data = json.dumps({'email': 'my@test.com'})
 
     # Exercise.
     response = self.app.post('/api/user/',
@@ -89,13 +89,13 @@ class UserApiTest(test_utils.CommonNdbTest):
 
     # Verify
     self.assertEqual(400, response.status_code)
-    self.assertFalse(user_models.User.find_by_username('test_user'))
+    self.assertFalse(user_models.User.find_by_email('my@test.com'))
 
   def test_create_user_fails_if_not_authorized(self):
     # Setup.
     headers = {}
     headers['Content-Type'] = 'application/json'
-    user_data = json.dumps({'username': 'test_user'})
+    user_data = json.dumps({'email': 'my@test.com'})
 
     # Exercise.
     response = self.app.post('/api/user/',
@@ -104,7 +104,7 @@ class UserApiTest(test_utils.CommonNdbTest):
 
     # Verify
     self.assertEqual(401, response.status_code)
-    self.assertFalse(user_models.User.find_by_username('test_user'))
+    self.assertFalse(user_models.User.find_by_email('my@test.com'))
 
 
 if __name__ == "__main__":

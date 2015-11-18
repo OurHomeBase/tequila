@@ -80,7 +80,7 @@ def save_token(token, request, *args, **kwargs):
 def get_user(username, password, client, request, *args, **kwargs):
   if not client:
     return None
-  user = user_models.User.find_by_username(username)
+  user = user_models.User.find_by_email(username)
 #   if not user.validate_password(password):
 #     return None
 
