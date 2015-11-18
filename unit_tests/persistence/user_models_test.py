@@ -33,5 +33,17 @@ class UserTest(test_utils.CommonNdbTest):
     self.assertTrue(found_user)
     self.assertEqual('my_user', found_user.username)
 
+  def test_create_user_check_hash_saved(self):
+    # Exercise.
+    created_user = user_models.User.create(username='my_user',
+                                           password='my_pass')
+    created_user.put()
+
+    # Verify
+    user = user_models.User.find_by_username('my_user')
+    password_hash = user.password_hash
+    self.assertTrue(password_hash)
+    self.assertTrue(user.check_password('my_pass'))
+
 if __name__ == "__main__":
   unittest.main()
